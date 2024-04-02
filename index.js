@@ -9,10 +9,49 @@
 
 const express = require('express');
 const axios = require('axios');
+const sqlite3 = require('sqlite3');
 
 const app = express();
 const port = 3000;
 
+// SQLlite database
+const db = new sqlite3.Database('database.db');
+
+// Define tables for your classes
+db.serialize(() => {
+    // Create User table
+    db.run(`CREATE TABLE IF NOT EXISTS User (
+        id INTEGER PRIMARY KEY,
+        username TEXT UNIQUE,
+        password TEXT,
+        name TEXT,
+        email TEXT UNIQUE,
+        phone TEXT,
+        role TEXT
+    )`);
+
+    // Create userClasses table
+    db.run(`CREATE TABLE IF NOT EXISTS userClasses (
+        id INTEGER PRIMARY KEY,
+        classTaken TEXT,
+        classAttended TEXT,
+        FOREIGN KEY (id) REFERENCES User(id)
+    )`);
+
+    // Create bankDetails table
+    db.run(`CREATE TABLE IF NOT EXISTS bankDetails (
+        id INTEGER PRIMARY KEY,
+        address TEXT,
+        expenses REAL,
+        payStatus TEXT,
+        timesPaid INTEGER,
+        missedPayment INTEGER,
+        FOREIGN KEY (id) REFERENCES User(id)
+    )`);
+});
+
+
+// Middleware
 
 app.get("/", async (req, res) => {
     res.render("index.ejs", {
@@ -34,40 +73,39 @@ app.get("/dashboard", async (req, res) => {
 
 
 app.post("/registerUser", async (req, res) => {
-    const { usernameIn, passwordIn } = req.body;
-    // Ensure usernamePassword array is defined, preferably at the top of your script
-    // For example: let usernamePassword = [];
-    usernamePassword.push({ username: usernameIn, password: passwordIn });
-    res.redirect("/dashboard"); // Redirect to login page after registration
+    const {nameIn, emailIn, phoneIn, usernameIn, passwordIn, roleIn} = req.body;
+    db.run(`INSERT INTO User (username, password, email, phone, role) 
+            VALUES (?, ?, ?, ?, ?, ?)`,
+            [usernameIn, passwordIn, nameIn, emailIn, phoneIn, roleIn],
+            function(err) {
+                if (err) {
+                    return res.status(500).json({ message: 'Error registering user' });
+                }
+                // User successfully registered
+                res.redirect("/dashboard");
+            });
 });
-
-
-
-// Array of username-password pairs
-const usernamePassword = [
-    { username: 'user1', password: 'password1' },
-    { username: 'user2', password: 'password2' },
-    // Add more username-password pairs as needed - The register form does this
-];
 
 
 // POST endpoint for login
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-    // Check if username exists in the usernamePassword array
-    const user = usernamePassword.find(user => user.username === username);
-
-    if (!user) {
-        return res.status(401).json({ message: 'Invalid username or password' });
-    }
-    if (user.password !== password) {
-        return res.status(401).json({ message: 'Invalid username or password' });
-    }
-
-    //else if everything is there
-    res.status(200).json({ message: 'Login successful' });
+    
+    db.get(`SELECT * FROM User WHERE username = ?`, [username], (err, user) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error logging in' });
+        }
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        // Check password here
+        if (user.password !== password) {
+            return res.status(401).json({ message: 'Incorrect password' });
+        }
+        // Login successful
+        res.status(200).json({ message: 'Login successful' });
+    });
 });
-
 
 
 //DW about this
