@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        header {
+            background-color: #212A3E;
+            width: 20%;
+            border-radius: 10px;
+            color: #F6ECA9;
+            text-align: center;
+            padding: 10px;
+            margin: 5% auto 10%; /* Updated margin to center vertically and horizontally */
+            display: flex; /* Use flexbox */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+        }
+
+        body {
+            background-color: #F1F6F9;
+            color: #F6ECA9;
+            font-family: Arial, sans-serif;
+        }
+        .containerLeft {
+            float: left;
+            width: 50%;
+            margin-left: 2%;
+            background-color: #212A3E;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .containerRight {
+            float: right;
+            width: 40%;
+            margin-right: 2%;
+            margin-top: 2%;
+            background-color: #212A3E;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .highlight {
+            color: #F6ECA9;
+        }
+        .card {
+            background-color: #394867;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .payment-window {
+            background-color: #F6ECA9;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .btn {
+            background-color: #4CAF50; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 15px 30px; /* Padding */
+            text-align: center; /* Center text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Display as inline-block */
+            font-size: 16px; /* Font size */
+            cursor: pointer; /* Cursor on hover */
+            border-radius: 5px; /* Rounded corners */
+            }
+
+        /* Hover effect */
+        .btn:hover {
+        background-color: #45a049; /* Darker green */
+        }
+         /* CSS styling for the table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    th, td {
+        border: 1px solid #394867;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #394867;
+    }
+    tr:nth-child(even) {
+        background-color: #394867;
+    }
+    </style>
+
+</head>
+<body>
+    <header>
+        <h1>Welcome Treasurer!</h1>
+    </header>
+    <div class="containerLeft">
+        <h1 class="highlight">Income Statement</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Income</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Rent</td>
+                    <td>$1500</td>
+                </tr>
+                <tr>
+                    <td>Coach Fees</td>
+                    <td>$1000</td>
+                </tr>
+                <tr>
+                    <td>Revenue</td>
+                    <td>$2500</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Revenue: $2500</h1>
+    </div>
+    <div class="containerRight">
+        <div class="main-container">
+            <h1 class="highlight">Coach Management</h1>
+            <div class="card">
+                <h2>Coach 1</h2> 
+                <button type="button" class="btn">Remove</button>
+            </div>
+        </div>
+        
+    </div>
+    
+</body>
+</html>

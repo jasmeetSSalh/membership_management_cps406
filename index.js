@@ -65,9 +65,18 @@ app.get("/register", async (req, res) => {
     })
 });
 
-app.get("/dashboard", async (req, res) => {
-    res.render("dashboard.ejs", {
-        
+app.get("/couchDashboard", async (req, res) => {
+    res.render("coachDashboard.ejs", {
+    })
+});
+
+app.get("/memberDashboard", async (req, res) => {
+    res.render("memberDashboard.ejs", {
+    })
+});
+
+app.get("/treasurer", async (req, res) => {
+    res.render("treasurer.ejs", {
     })
 });
 
@@ -89,22 +98,23 @@ app.post("/registerUser", async (req, res) => {
 
 // POST endpoint for login
 app.post('/login', (req, res) => {
-    const { username, password } = req.body;
+    res.redirect("/treasurer");
+    // const { username, password } = req.body;
     
-    db.get(`SELECT * FROM User WHERE username = ?`, [username], (err, user) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error logging in' });
-        }
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        // Check password here
-        if (user.password !== password) {
-            return res.status(401).json({ message: 'Incorrect password' });
-        }
-        // Login successful
-        res.status(200).json({ message: 'Login successful' });
-    });
+    // db.get(`SELECT * FROM User WHERE username = ?`, [username], (err, user) => {
+    //     if (err) {
+    //         return res.status(500).json({ message: 'Error logging in' });
+    //     }
+    //     if (!user) {
+    //         return res.status(404).json({ message: 'User not found' });
+    //     }
+    //     // Check password here
+    //     if (user.password !== password) {
+    //         return res.status(401).json({ message: 'Incorrect password' });
+    //     }
+    //     // Login successful
+    //     res.status(200).json({ message: 'Login successful' });
+    // });
 });
 
 

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        header {
+            background-color: #212A3E;
+            width: 20%;
+            border-radius: 10px;
+            color: #F6ECA9;
+            text-align: center;
+            padding: 10px;
+            margin: 3% auto 2%; /* Updated margin to center vertically and horizontally */
+            display: flex; /* Use flexbox */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+        }
+
+        body {
+            background-color: #F1F6F9;
+            color: #F6ECA9;
+            font-family: Arial, sans-serif;
+        }
+        .containerLeft {
+            float: left;
+            width: 50%;
+            margin-left: 2%;
+            background-color: #212A3E;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .containerRight {
+            float: right;
+            width: 40%;
+            margin-right: 2%;
+            margin-top: 2%;
+            background-color: #212A3E;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .highlight {
+            color: #F6ECA9;
+        }
+        .card {
+            background-color: #394867;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .payment-window {
+            background-color: #F6ECA9;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .btn {
+            background-color: #4CAF50; /* Green background */
+            border: none; /* Remove borders */
+            color: white; /* White text */
+            padding: 15px 30px; /* Padding */
+            text-align: center; /* Center text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Display as inline-block */
+            font-size: 16px; /* Font size */
+            cursor: pointer; /* Cursor on hover */
+            border-radius: 5px; /* Rounded corners */
+            }
+
+        /* Hover effect */
+        .btn:hover {
+        background-color: #45a049; /* Darker green */
+        }
+    </style>
+
+</head>
+<body>
+    <header>
+        <h1>Welcome!</h1>
+    </header>
+    <div class="containerLeft">
+        <div class="main-container">
+            <h1 class="highlight">Class Management System</h1>
+            <div class="card">
+                <h2>Class 1</h2>
+                <p>Class details...</p>
+                <button type="button" class="btn " >Attend Class</button>
+            </div>
+            <div class="card">
+                <h2>Class 2</h2>
+                <p>Class details...</p>
+                <button type="button" class="btn ">Attend Class</button>
+            </div>
+            <div class="card">
+                <h2>Class 2</h2>
+                <p>Class details...</p>
+                <button type="button" class="btn ">Attend Class</button>
+            </div>
+        </div>
+        
+    </div>
+    <div class="containerRight">
+        <div class="main-container">
+            <h1 class="highlight">Payment Information</h1>
+            <div class="card">
+                <h2>Payments Missed: </h2>
+                <h2>Current Expenese: </h2>
+                <h2>Payment Due: </h2>
+                <button type="button" class="btn ">Pay Now</button>
+            </div>
+        </div>
+        
+    </div>
+    
+</body>
+</html>
