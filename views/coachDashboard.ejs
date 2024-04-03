@@ -1,6 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script>
+    function displayMems(classno){
+        if(classno == 1){
+            document.getElementById("memlist1").style = "display: body";
+            document.getElementById("1class").innerHTML = "Hide Members";
+            document.getElementById("1class").onclick = function(){hideMems(1);};
+        }
+        else if(classno == 2){
+            document.getElementById("memlist2").style = "display: body";
+            document.getElementById("2class").innerHTML = "Hide Members";
+            document.getElementById("2class").onclick = function(){hideMems(2);};
+        }
+        else if(classno == 3){
+            document.getElementById("memlist3").style = "display: body";
+            document.getElementById("3class").innerHTML = "Hide Members";
+            document.getElementById("3class").onclick = function(){hideMems(3);};
+        }
+    }
+    function hideMems(classno){
+        if(classno == 1){
+            document.getElementById("memlist1").style = "display: none";
+            document.getElementById("1class").innerHTML = "View Members";
+            document.getElementById("1class").onclick = function(){displayMems(1);};
+        }
+        else if(classno == 2){
+            document.getElementById("memlist2").style = "display: none";
+            document.getElementById("2class").innerHTML = "View Members";
+            document.getElementById("2class").onclick = function(){displayMems(2);};
+        }
+        else if(classno == 3){
+            document.getElementById("memlist3").style = "display: none";
+            document.getElementById("3class").innerHTML = "View Members";
+            document.getElementById("3class").onclick = function(){displayMems(3);};
+        }
+    }
+</script>
     <title>Dashboard</title>
     <style>
         header {
@@ -85,19 +121,61 @@
             <div class="card">
                 <h2>Class 1</h2>
                 <p>Class details...</p>
-                <button type="button" class="btn " >View Members</button>
+                <button id="1class" onclick="displayMems(1)" type="button" class="btn ">View Members</button>
+                <fieldset id="memlist1" style="display: none">
+                    <div>
+                        <input type="checkbox" id="mem1" checked />
+                        <label for="mem1">Member 1</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="mem2" checked />
+                        <label for="mem2">Member 2</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="mem3" />
+                        <label for="mem3">Member 3</label>
+                    </div>
+                </fieldset>
                 <button type="button" class="btn ">Teach Class</button>
             </div>
             <div class="card">
                 <h2>Class 2</h2>
                 <p>Class details...</p>
-                <button type="button" class="btn ">View Members</button>
+                <button id="2class" onclick="displayMems(2)" type="button" class="btn ">View Members</button>
+                <fieldset id="memlist2" style="display: none">
+                    <div>
+                        <input type="checkbox" id="mem1" checked />
+                        <label for="mem1">Member 1</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="mem2" checked />
+                        <label for="mem2">Member 2</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="mem3" />
+                        <label for="mem3">Member 3</label>
+                    </div>
+                </fieldset>
                 <button type="button" class="btn ">Teach Class</button>
             </div>
             <div class="card">
-                <h2>Class 2</h2>
+                <h2>Class 3</h2>
                 <p>Class details...</p>
-                <button type="button" class="btn ">View Members</button>
+                <button id="3class" onclick="displayMems(3)" type="button" class="btn ">View Members</button>
+                <fieldset id="memlist3" style="display: none">
+                    <div>
+                        <input type="checkbox" id="mem1" checked />
+                        <label for="mem1">Member 1</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="mem2" checked />
+                        <label for="mem2">Member 2</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="mem3" />
+                        <label for="mem3">Member 3</label>
+                    </div>
+                </fieldset>
                 <button type="button" class="btn ">Teach Class</button>
             </div>
         </div>
