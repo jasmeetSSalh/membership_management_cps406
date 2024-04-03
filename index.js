@@ -16,38 +16,91 @@ const port = 3000;
 
 // SQLlite database
 const db = new sqlite3.Database('database.db');
-
 // Define tables for your classes
 db.serialize(() => {
     // Create User table
-    db.run(`CREATE TABLE IF NOT EXISTS User (
-        id INTEGER PRIMARY KEY,
-        username TEXT UNIQUE,
-        password TEXT,
-        name TEXT,
-        email TEXT UNIQUE,
-        phone TEXT,
-        role TEXT
+    db.run(`CREATE TABLE IF NOT EXISTS Users(
+        UserID INTEGER PRIMARY KEY AUTOINCREMENT,
+        FirstName TEXT,
+        LastName TEXT,
+        Username TEXT UNIQUE,
+        Password TEXT,
+        Email TEXT UNIQUE,
+        Phone_Number INTEGER,
+        Role TEXT DEFAULT 'Member',
+        Classes_Attended INTEGER DEFAULT 0
     )`);
 
-    // Create userClasses table
-    db.run(`CREATE TABLE IF NOT EXISTS userClasses (
-        id INTEGER PRIMARY KEY,
-        classTaken TEXT,
-        classAttended TEXT,
-        FOREIGN KEY (id) REFERENCES User(id)
+    // Create Classes table
+    db.run(`CREATE TABLE IF NOT EXISTS Classes (
+        ClassID INTEGER PRIMARY KEY AUTOINCREMENT,
+        ClassName TEXT,
+        ClassDcript TEXT,
+        Coach INTEGER,
+        Date DATE DEFAULT (date('now')),
+        FOREIGN KEY(Coach) REFERENCES Users(UserID)
+    );`);
+
+    // Create Bank_Details table
+    db.run(`CREATE TABLE IF NOT EXISTS Bank_Details (
+        UserID INTEGER,
+        Expenses REAL DEFAULT 0.00,
+        Missed_Payments INTEGER DEFAULT 0,
+        FOREIGN KEY(UserID) REFERENCES Users(UserID)
     )`);
 
-    // Create bankDetails table
-    db.run(`CREATE TABLE IF NOT EXISTS bankDetails (
-        id INTEGER PRIMARY KEY,
-        address TEXT,
-        expenses REAL,
-        payStatus TEXT,
-        timesPaid INTEGER,
-        missedPayment INTEGER,
-        FOREIGN KEY (id) REFERENCES User(id)
+    //Pay_Status is a boolean (pay or not pay true or false)
+    //PayStatus was originally in an enrolled classes table, but they were the exact same as class_attendance so I moved it here
+    db.run(`CREATE TABLE IF NOT EXISTS Class_Attendance (
+        UserID INTEGER,
+        ClassID INTEGER,
+        Times_Attended INTEGER,
+        Times_Paid INTEGER,
+        Attendance_Status TEXT,
+        Pay_Status INTEGER,
+        FOREIGN KEY(UserID) REFERENCES Users(UserID),
+        FOREIGN KEY(ClassID) REFERENCES Classes(ClassID)
     )`);
+
+    //dummy accounts for users table
+    db.run(`INSERT INTO users (FirstName, LastName, Username, Password, Email, Phone_Number) VALUES 
+    ('Darn', 'Damnington', 'Darn', 'password', 'Darn@gmail.com', 4166787890),
+    ('Damn', 'Darnington', 'Damn', 'password', 'Damn@gmail.com', 4166987690),
+    ('Dang', 'Dangington', 'Dang', 'password', 'Dang@gmail.com', 4166986424),
+    ('Jim', 'John', 'JimJohn123', 'password', 'JimJohn@gmail.com', 4166780988),
+    ('John', 'Jim', 'JohnJim321', 'password', 'JohnJim@gmail.com', 4166758721),
+    ('Phil', 'The Horse', 'PhilDaHorse', 'password', 'PhilDaHorse@gmail.com', 6476789090),
+    ('Coach', 'From L4D2', 'CoachfromL4D2', 'password', 'Coach@gmail.com', 4370987890)`);
+
+    //dummy classes
+    db.run(`INSERT INTO classes (ClassName, ClassDcript, Coach) VALUES 
+    ('Intro to Naming thing', 'it names things', 14),
+    ('Intro to Naming thing better', 'it names things but better', 14),
+    ('Intro to Naming better things', 'get better at naming things', 14),
+    ('Intro to names 101', 'when you dont know how to name things', 14)`);
+
+    //dummy bank info, inserted only userID
+    db.run(`INSERT INTO bank_details (UserID) VALUES
+    (1),
+    (2),
+    (3),
+    (4),
+    (5),
+    (6)`);
+
+    //dummy class attendance, inserted only user and classID
+    db.run(`INSERT INTO class_attendance (ClassID, UserID) VALUES
+    (1,1),
+    (1,3),
+    (1,5),
+    (1,6),
+    (2,1),
+    (2,2),
+    (2,3),
+    (3,4),
+    (3,5),
+    (4,3),
+    (4,6)`);
 });
 
 
