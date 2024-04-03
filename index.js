@@ -16,37 +16,46 @@ const port = 3000;
 
 // SQLlite database
 const db = new sqlite3.Database('database.db');
-
 // Define tables for your classes
 db.serialize(() => {
     // Create User table
-    db.run(`CREATE TABLE IF NOT EXISTS User (
-        id INTEGER PRIMARY KEY,
-        username TEXT UNIQUE,
-        password TEXT,
-        name TEXT,
-        email TEXT UNIQUE,
-        phone TEXT,
-        role TEXT
+    db.run(`CREATE TABLE IF NOT EXISTS Users(
+        UserID INTEGER PRIMARY KEY AUTOINCREMENT,
+        FirstName TEXT,
+        LastName TEXT,
+        Username TEXT UNIQUE,
+        Password TEXT,
+        Email TEXT UNIQUE,
+        Phone_Number INTEGER,
+        Role TEXT DEFAULT 'Member',
+        Classes_Attended INTEGER
     )`);
 
     // Create userClasses table
-    db.run(`CREATE TABLE IF NOT EXISTS userClasses (
-        id INTEGER PRIMARY KEY,
-        classTaken TEXT,
-        classAttended TEXT,
-        FOREIGN KEY (id) REFERENCES User(id)
-    )`);
+    db.run(`CREATE TABLE IF NOT EXISTS Classes (
+        ClassID INTEGER PRIMARY KEY AUTOINCREMENT,
+        ClassName TEXT,
+        ClassDcript TEXT,
+        Coach INTEGER,
+        Date DATE DEFAULT (date('now')),
+        FOREIGN KEY(Coach) REFERENCES Users(UserID)
+    );`);
 
     // Create bankDetails table
-    db.run(`CREATE TABLE IF NOT EXISTS bankDetails (
-        id INTEGER PRIMARY KEY,
-        address TEXT,
-        expenses REAL,
-        payStatus TEXT,
-        timesPaid INTEGER,
-        missedPayment INTEGER,
-        FOREIGN KEY (id) REFERENCES User(id)
+    db.run(`CREATE TABLE IF NOT EXISTS Bank_Details (
+        UserID INTEGER,
+        Expenses REAL DEFAULT 0.00,
+        Missed_Payments INTEGER DEFAULT 0,
+        FOREIGN KEY(UserID) REFERENCES Users(UserID)
+    )`);
+
+    //Pay_Status is a boolean (pay or not pay true or false)
+    db.run(`CREATE TABLE IF NOT EXISTS Enrolled_Classes (
+        UserID INTEGER,
+        ClassID INTEGER,
+        Pay_Status INTEGER,
+        FOREIGN KEY(UserID) REFERENCES Users(UserID),
+        FOREIGN KEY(ClassID) REFERENCES Classes(ClassID)
     )`);
 });
 
