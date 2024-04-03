@@ -31,7 +31,7 @@ db.serialize(() => {
         Classes_Attended INTEGER DEFAULT 0
     )`);
 
-    // Create userClasses table
+    // Create Classes table
     db.run(`CREATE TABLE IF NOT EXISTS Classes (
         ClassID INTEGER PRIMARY KEY AUTOINCREMENT,
         ClassName TEXT,
@@ -41,7 +41,7 @@ db.serialize(() => {
         FOREIGN KEY(Coach) REFERENCES Users(UserID)
     );`);
 
-    // Create bankDetails table
+    // Create Bank_Details table
     db.run(`CREATE TABLE IF NOT EXISTS Bank_Details (
         UserID INTEGER,
         Expenses REAL DEFAULT 0.00,
@@ -50,6 +50,7 @@ db.serialize(() => {
     )`);
 
     //Pay_Status is a boolean (pay or not pay true or false)
+    //PayStatus was originally in an enrolled classes table, but they were the exact same as class_attendance so I moved it here
     db.run(`CREATE TABLE IF NOT EXISTS Class_Attendance (
         UserID INTEGER,
         ClassID INTEGER,
@@ -71,12 +72,14 @@ db.serialize(() => {
     ('Phil', 'The Horse', 'PhilDaHorse', 'password', 'PhilDaHorse@gmail.com', 6476789090),
     ('Coach', 'From L4D2', 'CoachfromL4D2', 'password', 'Coach@gmail.com', 4370987890)`);
 
+    //dummy classes
     db.run(`INSERT INTO classes (ClassName, ClassDcript, Coach) VALUES 
     ('Intro to Naming thing', 'it names things', 14),
     ('Intro to Naming thing better', 'it names things but better', 14),
     ('Intro to Naming better things', 'get better at naming things', 14),
     ('Intro to names 101', 'when you dont know how to name things', 14)`);
 
+    //dummy bank info, inserted only userID
     db.run(`INSERT INTO bank_details (UserID) VALUES
     (1),
     (2),
@@ -85,6 +88,7 @@ db.serialize(() => {
     (5),
     (6)`);
 
+    //dummy class attendance, inserted only user and classID
     db.run(`INSERT INTO class_attendance (ClassID, UserID) VALUES
     (1,1),
     (1,3),
