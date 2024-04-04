@@ -103,11 +103,14 @@ function createTables() {
 // Insert sample data into tables
 function insertSampleData() {
     // Insert Users
-    db.run(`INSERT INTO Users (FirstName, LastName, Username, Password, Email, Phone_Number, Role) VALUES 
-        ('John', 'Doe', 'johndoe', 'password', 'dummyemail1@gmail.com', '1234567890', 'Coach'),
-        ('Jane', 'Doe', 'janedoe', 'password', 'dummyemail2@gmail.com', '1234567890', 'Coach'),
-        ('Alice', 'Smith', 'alicesmith', 'password', 'dummyemail3@gmail.com', '1234567890', 'Member'),
-        ('Bob', 'Smith', 'bobsmith', 'password', 'dummyemail4@gmail.com', '1234567890', 'Member')`, (err) => {
+    db.run(`INSERT INTO users (FirstName, LastName, Username, Password, Email, Phone_Number, Classes_Attended, Role) VALUES 
+    ('Darn', 'Damnington', 'Darn', 'password', 'Darn@gmail.com', 4166787890,10, "Member"),
+    ('Damn', 'Darnington', 'Damn', 'password', 'Damn@gmail.com', 4166987690,4, "Coach"),
+    ('Dang', 'Dangington', 'Dang', 'password', 'Dang@gmail.com', 4166986424,12, "Member"),
+    ('Jim', 'John', 'JimJohn123', 'password', 'JimJohn@gmail.com', 4166780988,1, "Coach"),
+    ('John', 'Jim', 'JohnJim321', 'password', 'JohnJim@gmail.com', 4166758721,10, "Member"),
+    ('Phil', 'The Horse', 'PhilDaHorse', 'password', 'PhilDaHorse@gmail.com', 6476789090,9, "Member"),
+    ('Coach', 'From L4D2', 'CoachfromL4D2', 'password', 'Coach@gmail.com', 4370987890,0, "Member")`, (err) => {
             if (err) {
                 console.error('Error inserting sample data into Users table', err.message);
             } else {
