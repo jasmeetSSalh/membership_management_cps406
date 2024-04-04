@@ -10,36 +10,41 @@
     <div class="min-h-screen flex justify-center items-center">
         <div class="bg-white p-8 rounded-lg shadow-md w-80">
             <h2 class="text-2xl font-semibold mb-4 text-center">Register</h2>
-            <form action="/registerUser" method="POST">
+            <form action="/registerUser" method="post">
                 <div class="mb-8">
-                    <label for="nameIn" class="block mb-2">Name:</label>
-                    <input type="text" id="username" name="username" required class="w-full px-3 py-2 border rounded-md">
+                    <label for="firstNameIn" class="block mb-2">First Name:</label>
+                    <input type="text" id="firstNameIn" name="FirstName" required class="w-full px-3 py-2 border rounded-md">
+                </div>
+                <div class="mb-8">
+                    <label for="lastNameIn" class="block mb-2">Last Name:</label>
+                    <input type="text" id="lastNameIn" name="LastName" required class="w-full px-3 py-2 border rounded-md">
                 </div>
                 <div class="mb-8">
                     <label for="emailIn" class="block mb-1">Email:</label>
-                    <input type="email" id="emailIn" name="emailIn" required class="w-full px-3 py-2 border rounded-md">
+                    <input type="email" id="emailIn" name="Email" required class="w-full px-3 py-2 border rounded-md">
                 </div>
                 <div class="mb-8">
                     <label for="phoneIn" class="block mb-1">Phone:</label>
-                    <input type="text" id="phoneIn" name="phoneIn" required class="w-full px-3 py-2 border rounded-md">
+                    <input type="text" id="phoneIn" name="Phone_Number" required class="w-full px-3 py-2 border rounded-md">
                 </div>
                 <div class="mb-8">
                     <label for="usernameIn" class="block mb-1">Username:</label>
-                    <input type="text" id="usernameIn" name="usernameIn" required class="w-full px-3 py-2 border rounded-md">
+                    <input type="text" id="usernameIn" name="Username" required class="w-full px-3 py-2 border rounded-md">
                 </div>
                 <div class="mb-8">
                     <label for="passwordIn" class="block mb-1">Password:</label>
-                    <input type="password" id="passwordIn" name="passwordIn" required class="w-full px-3 py-2 border rounded-md">
+                    <input type="password" id="passwordIn" name="Password" required class="w-full px-3 py-2 border rounded-md">
                 </div>
                 <div class="mb-8">
                     <label for="roleIn" class="block mb-1">Select Role:</label>
-                    <select id="roleIn" name="roleIn" required class="w-full px-3 py-2 border rounded-md">
+                    <select id="roleIn" name="Role" required class="w-full px-3 py-2 border rounded-md">
                         <option value="Coach">Coach</option>
                         <option value="Member">Member</option>
                     </select>
                 </div>
                 <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md">Register</button>
             </form>
+            
             <div class="mt-4">
                 <p class="text-center">Already have an account?</p>
                 <a href="/" class="block text-center text-blue-500 underline">Login</a>
