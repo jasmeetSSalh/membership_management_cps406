@@ -10,13 +10,30 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
+const ejs = require('ejs');
 
 const app = express();
 const port = 3000;
+//used to render the ejs files so we can pass data to the front end
+app.set('view engine', 'ejs');
+
+
+//Importing All User Classes
+const User = require('./objectClasses/user.js');
+const bankDetails = require('./objectClasses/bankDetails.js');
+const Classes = require('./objectClasses/classes.js');
+const Pay_Status = require('./objectClasses/paymentStatus.js');
+const { all } = require('axios');
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
+// Global variable to store the logged in user
+let currentUser = null;
+// Global variable to store the bank details of the logged in user
+let currentBankDetails = null;
+//declare a array
+let allClasses = [];
 
 // SQLite database - this is an in-memory database
 const db = new sqlite3.Database(':memory:', (err) => {
@@ -49,12 +66,12 @@ function createTables() {
     });
 
     // Create Classes table
-    db.run(`CREATE TABLE IF NOT EXISTS Classes(
+    db.run(`CREATE TABLE IF NOT EXISTS Classes (
         ClassID INTEGER PRIMARY KEY AUTOINCREMENT,
         ClassName TEXT,
         ClassDcript TEXT,
         Coach INTEGER,
-        Date DATE DEFAULT (date('now')),
+        Date TEXT,
         FOREIGN KEY(Coach) REFERENCES Users(UserID)
     )`, (err) => {
         if (err) {
@@ -119,15 +136,16 @@ function insertSampleData() {
         });
 
     // Insert Classes
-    db.run(`INSERT INTO Classes (ClassName, ClassDcript, Coach) VALUES 
-    ('Intro to Naming thing', 'it names things', 1),
-    ('Intro to Naming thing better', 'it names things but better', 1),
-    ('Intro to Naming better things', 'get better at naming things', 1),
-    ('Intro to names 101', 'when you dont know how to name things', 1)`, (err) => {
+    db.run(`INSERT INTO Classes (ClassName, ClassDcript, Coach, Date) VALUES 
+    ('Intro to Naming thing',        'it names things',             1, '2021-10-01'),
+    ('Intro to Naming thing better', 'it names things but better',  1, '2021-11-01'),
+    ('Intro to Naming better things','get better at naming things', 1, '2021-11-02'),
+    ('Intro to names 101', 'when you dont know how to name things', 1, '2024-02-02')`, (err) => {
             if (err) {
                 console.error('Error inserting sample data into Classes table', err.message);
             } else {
                 console.log('Sample data inserted into Classes table.');
+                storeAllClassesLocally();
             }
         });
 
@@ -165,26 +183,83 @@ function insertSampleData() {
         });
 };
 
+// Function stores all classes in the database into an array
+function storeAllClassesLocally(){
+    //query all the classes and store them in an array where each instance of a class is stored in the array
+    db.all(`SELECT * FROM Classes`, (err, rows) => {
+        if (err) {
+            console.error('Error retrieving classes', err.message);
+        } else {
+            rows.forEach((row) => {
+                allClasses.push(new Classes(row.ClassID, row.ClassName, row.ClassDcript, row.Coach, row.Date));
+            });
+            console.log('Classes retrieved successfully.');
+        }
+    }); 
+}
+
+function storeCurrentUserBankDetailsLocally(){
+    db.get(`SELECT * FROM Bank_Details WHERE UserID = ?`, currentUser.UserID, (err, row) => {
+        if (err) {
+            console.error('Error retrieving bank details', err.message);
+        } else {
+            if (row) {
+                currentBankDetails = [row.Expenses, row.Missed_Payments];
+            } else {
+                // If no bank details found for the user, initialize it to default values
+                currentBankDetails = [0, 0];
+            }
+            console.log('Bank details retrieved successfully:', currentBankDetails);
+        }
+    });
+}
+
 // Routes
 app.get("/", async (req, res) => {
     res.render("index.ejs", {});
-});
 
+});
 
 app.get("/register", async (req, res) => {
     res.render("register.ejs", {});
 });
 
 app.get("/coachDashboard", async (req, res) => {
-    res.render("coachDashboard.ejs", {});
+    res.render("coachDashboard.ejs", {
+        allClasses: allClasses
+    });
 });
 
 app.get("/memberDashboard", async (req, res) => {
-    res.render("memberDashboard.ejs", {});
+    currentBankDetails = [300, 3];
+    res.render("memberDashboard.ejs", {
+        allClasses: allClasses,
+        currentUser: currentUser,
+        currentBankDetails: currentBankDetails
+    });
 });
 
 app.get("/treasurer", async (req, res) => {
     res.render("treasurer.ejs", {});
+});
+
+
+app.get("/processPayment", async (req, res) => {
+    currentBankDetails = [300, 3];
+    let paymentAmount = currentBankDetails[0];
+    res.render("paymentProcessingPage.ejs", {
+        paymentAmount: paymentAmount
+    });
+    //Note:
+    //When the submit button on the payment processing page is clicked need to update the bank details
+    //and send the treasurer back to the treasurer page
+    
+});
+app.post("/attendClass", async (req, res) => {
+    // Get the class ID from the form
+    let classID = req.body.classID;
+    //Come back to this
+    console.log("Class ID:", classID);
 });
 
 // Register User
@@ -211,6 +286,10 @@ app.post("/registerUser", async (req, res) => {
                 // User successfully registered
                 
             });
+        currentUser = new User(FirstName, LastName, Email, Phone_Number, Username, Role);
+        currentBankDetails = storeCurrentUserBankDetailsLocally();
+
+        storeCurrentUserBankDetailsLocally();
         if (Role == 'Member') {
             res.redirect("/memberDashboard");
         } else if (Role == 'Coach') {
@@ -218,11 +297,12 @@ app.post("/registerUser", async (req, res) => {
         } else {
             res.redirect("/treasurer");
         }
+        
+
     });
 });
 
 
-// Login
 // Login
 app.post('/login', (req, res) => {
     console.log("Request Body:", req.body);
@@ -251,15 +331,20 @@ app.post('/login', (req, res) => {
             return res.status(401).json({ message: 'Incorrect password' });
         }
 
+        currentUser = new User(user.UserID, user.FirstName, user.LastName, user.Username, user.Password, user.Email, user.Phone_Number, user.Role);
+        currentBankDetails = storeCurrentUserBankDetailsLocally();
+
         // Login successful
         // Redirect to appropriate dashboard based on user's role
         if (user.Role == 'Member') {
             res.redirect("/memberDashboard");
+            user = user;
         } else if (user.Role == 'Coach') {
             res.redirect("/coachDashboard");
         } else {
             res.redirect("/treasurer");
         }
+        
     });
 });
 
@@ -269,3 +354,5 @@ app.post('/login', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+
+

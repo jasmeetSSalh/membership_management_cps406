@@ -23,7 +23,7 @@
         }
         .containerLeft {
             float: left;
-            width: 50%;
+            width: 45%; /* Adjusted width */
             margin-left: 2%;
             background-color: #212A3E;
             padding: 20px;
@@ -31,7 +31,7 @@
         }
         .containerRight {
             float: right;
-            width: 40%;
+            width: 45%; /* Adjusted width */
             margin-right: 2%;
             margin-top: 2%;
             background-color: #212A3E;
@@ -49,7 +49,7 @@
             border-radius: 8px;
         }
         .payment-window {
-            background-color: #F6ECA9;
+            background-color: #394867;
             margin: 10px;
             padding: 10px;
             border-radius: 8px;
@@ -66,14 +66,29 @@
             font-size: 16px; /* Font size */
             cursor: pointer; /* Cursor on hover */
             border-radius: 5px; /* Rounded corners */
-            }
+        }
 
         /* Hover effect */
         .btn:hover {
-        background-color: #45a049; /* Darker green */
+            background-color: #45a049; /* Darker green */
+        }
+        /* Style for labels and inputs */
+        label {
+            color: #F6ECA9;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            color: #333;
+            width: calc(100% - 18px); /* Adjusted width */
+            margin-bottom: 10px;
         }
     </style>
-
 </head>
 <body>
     <header>
@@ -82,36 +97,51 @@
     <div class="containerLeft">
         <div class="main-container">
             <h1 class="highlight">Class Management System</h1>
-            <div class="card">
-                <h2>Class 1</h2>
-                <p>Class details...</p>
-                <button type="button" class="btn " >Attend Class</button>
-            </div>
-            <div class="card">
-                <h2>Class 2</h2>
-                <p>Class details...</p>
-                <button type="button" class="btn ">Attend Class</button>
-            </div>
-            <div class="card">
-                <h2>Class 2</h2>
-                <p>Class details...</p>
-                <button type="button" class="btn ">Attend Class</button>
-            </div>
+            <% for (let i = 0; i < allClasses.length; i++) { %>
+                <div class="card">
+                    <h2><%= allClasses[i].className %></h2>
+                    <p><%= allClasses[i].classDescription %></p>
+                    <button type="button" class="btn" id="attendBtn<%= i %>" data-class-id="<%= allClasses[i].classId %>">Attend Class</button>
+                </div>
+            <% } %>
         </div>
-        
     </div>
     <div class="containerRight">
         <div class="main-container">
             <h1 class="highlight">Payment Information</h1>
-            <div class="card">
-                <h2>Payments Missed: </h2>
-                <h2>Current Expenese: </h2>
-                <h2>Payment Due: </h2>
-                <button type="button" class="btn ">Pay Now</button>
+            <div class="card payment-window">
+                <label for="amount">Payment Missed:</label>
+                <input type="text" id="amount" name="amount" value="<%= currentBankDetails[1] %>" readonly> 
+                <br>
+                <label for="amount">Payment Due:</label>
+                <input type="text" id="amount" name="amount" value="$<%= currentBankDetails[0] %>" readonly> 
+                <br>
+                <btn id="redirectButton" class="btn">Pay Now</btn>
             </div>
         </div>
-        
     </div>
-    
+    <script>
+        // Add event listeners to each "Attend Class" button
+        var attendButtons = document.querySelectorAll('.btn[id^="attendBtn"]');
+        attendButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
+                var classId = this.getAttribute('data-class-id');
+                console.log(classId); // This will log the class ID to the console
+                // send a post request to the server to attend the class
+                fetch ('/attendClass', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ classId: classId })
+                })
+            });
+        });
+
+        // Redirect button event listener
+        document.getElementById("redirectButton").addEventListener("click", function() {
+            window.location.href = "/process-payment";
+        });
+    </script>
 </body>
 </html>

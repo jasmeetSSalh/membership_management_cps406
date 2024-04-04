@@ -5,3 +5,5 @@ class bankDetails {
         this.missedPayment = missedPayment;
     }
 }
+
+module.exports = bankDetails;

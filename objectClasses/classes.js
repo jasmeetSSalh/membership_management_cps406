@@ -7,3 +7,5 @@ class userClasses {
         this.date = date;
     }
 }
+
+module.exports = userClasses;
