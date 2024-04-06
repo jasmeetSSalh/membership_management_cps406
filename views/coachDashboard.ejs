@@ -119,6 +119,7 @@
         <div class="main-container">
             <h1 class="highlight">Class Management System</h1>
             <div class="card">
+                
                 <h2>Class 1</h2>
                 <p>Class details...</p>
                 <button id="1class" onclick="displayMems(1)" type="button" class="btn ">View Members</button>
@@ -193,14 +194,18 @@
     </div>
     <div class="containerRight">
         <div class="main-container">
-            <h1 class="highlight">Send Message</h1>
+            <h1 class="highlight">Send Message To All Memebers:</h1>
             <div class="card">
-                <h2>Message: </h2>
-                <textarea rows="4" cols="50"></textarea>
-                <br>
-                <button type="button" class="btn">Send</button>
+                <form action="/sendMessage" method="POST"> <!-- Add form with action and method -->
+                    <h2>Message: </h2>
+                    <textarea name="message" rows="4" cols="50"></textarea> <!-- Add name attribute to textarea -->
+                    <br>
+                    <button type="submit" class="btn">Send</button> <!-- Change button type to submit -->
+                </form>
             </div>
         </div>
     </div>
+
+    
 </body>
 </html>

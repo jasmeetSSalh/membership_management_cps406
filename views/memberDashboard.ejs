@@ -10,10 +10,10 @@
             color: #F6ECA9;
             text-align: center;
             padding: 10px;
-            margin: 3% auto 2%; /* Updated margin to center vertically and horizontally */
-            display: flex; /* Use flexbox */
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
+            margin: 3% auto 2%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         body {
@@ -23,7 +23,7 @@
         }
         .containerLeft {
             float: left;
-            width: 45%; /* Adjusted width */
+            width: 45%;
             margin-left: 2%;
             background-color: #212A3E;
             padding: 20px;
@@ -31,7 +31,7 @@
         }
         .containerRight {
             float: right;
-            width: 45%; /* Adjusted width */
+            width: 45%;
             margin-right: 2%;
             margin-top: 2%;
             background-color: #212A3E;
@@ -56,23 +56,21 @@
         }
 
         .btn {
-            background-color: #4CAF50; /* Green background */
-            border: none; /* Remove borders */
-            color: white; /* White text */
-            padding: 15px 30px; /* Padding */
-            text-align: center; /* Center text */
-            text-decoration: none; /* Remove underline */
-            display: inline-block; /* Display as inline-block */
-            font-size: 16px; /* Font size */
-            cursor: pointer; /* Cursor on hover */
-            border-radius: 5px; /* Rounded corners */
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
         }
 
-        /* Hover effect */
         .btn:hover {
-            background-color: #45a049; /* Darker green */
+            background-color: #45a049;
         }
-        /* Style for labels and inputs */
         label {
             color: #F6ECA9;
             display: block;
@@ -85,7 +83,7 @@
             border: 1px solid #ccc;
             background-color: #fff;
             color: #333;
-            width: calc(100% - 18px); /* Adjusted width */
+            width: calc(100% - 18px);
             margin-bottom: 10px;
         }
     </style>
@@ -102,6 +100,7 @@
                     <h2><%= allClasses[i].className %></h2>
                     <p><%= allClasses[i].classDescription %></p>
                     <button type="button" class="btn" id="attendBtn<%= i %>" data-class-id="<%= allClasses[i].classId %>">Attend Class</button>
+
                 </div>
             <% } %>
         </div>
@@ -116,31 +115,59 @@
                 <label for="amount">Payment Due:</label>
                 <input type="text" id="amount" name="amount" value="$<%= currentBankDetails[0] %>" readonly> 
                 <br>
-                <btn id="redirectButton" class="btn">Pay Now</btn>
+                <button id="redirectButton" class="btn">Pay Now</button>
             </div>
         </div>
     </div>
+    <div class="containerRight">
+        <div class="main-container">
+            <h1 class="highlight">Message Board</h1>
+            <div class="card payment-window">
+                <label for="amount">All Messages</label>
+                <% for (let i = 0; i < allMessages.length; i++) { %>
+                    <input type="text" id="amount" name="amount" value="<%= allMessages[i] %>" readonly> 
+                <% } %>
+                <br>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Add event listeners to each "Attend Class" button
-        var attendButtons = document.querySelectorAll('.btn[id^="attendBtn"]');
-        attendButtons.forEach(function(button) {
-            button.addEventListener("click", function() {
-                var classId = this.getAttribute('data-class-id');
-                console.log(classId); // This will log the class ID to the console
-                // send a post request to the server to attend the class
-                fetch ('/attendClass', {
+        // Function to send POST request with classId
+        async function sendClassId(classId) {
+            try {
+                const response = await fetch('/attendClass', { // Replace '/your-endpoint' with your actual endpoint
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ classId: classId })
-                })
-            });
-        });
+                    body: JSON.stringify({ classId: classId }),
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                console.log(classId, data);
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        }
 
-        // Redirect button event listener
-        document.getElementById("redirectButton").addEventListener("click", function() {
-            window.location.href = "/process-payment";
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select all buttons and add an event listener to each
+            Array.from(document.querySelectorAll('.btn')).forEach(button => {
+                button.addEventListener('click', function() {
+                    const classId = this.getAttribute('data-class-id'); // Get classId from the button
+                    sendClassId(classId); // Send classId with the POST request
+                    console.log(classId);
+                });
+            });
+
+            // Redirect to payment page
+            document.getElementById("redirectButton").addEventListener("click", function() {
+                window.location.href = "/processPayment";
+            });
         });
     </script>
 </body>

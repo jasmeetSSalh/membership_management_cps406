@@ -11,11 +11,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const ejs = require('ejs');
+const cors = require('cors');
+
 
 const app = express();
 const port = 3000;
 //used to render the ejs files so we can pass data to the front end
 app.set('view engine', 'ejs');
+app.use(bodyParser.json()); // to support JSON-encoded bodies
+app.use(cors()); // Enable CORS
+
 
 
 //Importing All User Classes
@@ -28,12 +33,21 @@ const { all } = require('axios');
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
-// Global variable to store the logged in user
+//Global variable to store the logged in user
 let currentUser = null;
-// Global variable to store the bank details of the logged in user
+//Global variable to store the bank details of the logged in user
 let currentBankDetails = null;
-//declare a array
+//Global variable to store all the classes in the database
 let allClasses = [];
+//Global varibable to store the user's classes with their attendance and payment status
+let userClasses = [];
+//Global variable to store all the coachs
+let allCoaches = [];
+//Message sent to the user
+let allMessages = [];
+allMessages.push("reminder: you have to pay for the class you attended last week");
+allMessages.push("reminder: drink plenty of water before the class");
+
 
 // SQLite database - this is an in-memory database
 const db = new sqlite3.Database(':memory:', (err) => {
@@ -121,7 +135,7 @@ function createTables() {
 function insertSampleData() {
     // Insert Users
     db.run(`INSERT INTO users (FirstName, LastName, Username, Password, Email, Phone_Number, Classes_Attended, Role) VALUES 
-    ('Darn', 'Damnington', 'Darn', 'password', 'Darn@gmail.com', 4166787890,10, "Member"),
+    ('Darn', 'Damnington', 'Darn', 'password', 'Darn@gmail.com', 4166787890,10, "Treasurer"),
     ('Damn', 'Darnington', 'Damn', 'password', 'Damn@gmail.com', 4166987690,4, "Coach"),
     ('Dang', 'Dangington', 'Dang', 'password', 'Dang@gmail.com', 4166986424,12, "Member"),
     ('Jim', 'John', 'JimJohn123', 'password', 'JimJohn@gmail.com', 4166780988,1, "Coach"),
@@ -163,22 +177,23 @@ function insertSampleData() {
         });
 
     // Insert Class_Attendance
-    db.run(`INSERT INTO Class_Attendance (ClassID, UserID) VALUES
-    (1,1),
-    (1,3),
-    (1,4),
-    (1,4),
-    (2,1),
-    (2,2),
-    (2,3),
-    (3,4),
-    (3,4),
-    (4,3),
-    (4,4)`, (err) => {
+    db.run(`INSERT INTO Class_Attendance (ClassID, UserID, Times_Attended, Times_Paid, Attendance_Status, Pay_Status) VALUES
+    (1,1, 1, 1, 'Attended', 0),
+    (1,3, 1, 1, 'Attended', 0),
+    (1,4, 1, 1, 'Attended', 1),
+    (1,4, 1, 1, 'Attended', 1),
+    (2,1, 1, 1, 'Attended', 0),
+    (2,2, 1, 1, 'Attended', 0),
+    (2,3, 1, 1, 'Attended', 1),
+    (3,4, 1, 1, 'Attended', 0),
+    (3,4, 1, 1, 'Attended', 1),
+    (4,3, 1, 1, 'Attended', 0),
+    (4,4, 1, 1, 'Attended', 1)`, (err) => {
             if (err) {
                 console.error('Error inserting sample data into Class_Attendance table', err.message);
             } else {
                 console.log('Sample data inserted into Class_Attendance table.');
+                
             }
         });
 };
@@ -214,6 +229,52 @@ function storeCurrentUserBankDetailsLocally(){
     });
 }
 
+function storeCurrentUserClassesAttendanceLocally(){
+    db.all(`SELECT * FROM Class_Attendance WHERE UserID = ?`, currentUser.UserID, (err, rows) => {
+        if (err) {
+            console.error('Error retrieving user classes', err.message);
+        } else {
+            let tempUserClasses = [];
+            rows.forEach((row) => {
+                tempUserClasses.push(new Class_Attendance(row.UserID, row.ClassID, row.Times_Attended, row.Times_Paid, row.Attendance_Status, row.Pay_Status));
+            });
+            console.log('User classes retrieved successfully.');
+            return tempUserClasses;
+        }
+    });
+}
+
+// Function to get all account receivable for the treasurer
+function getAllAccountRecievable() {
+    return new Promise((resolve, reject) => {
+        db.all(`SELECT * FROM Class_Attendance WHERE Pay_Status = 0`, (err, rows) => {
+            if (err) {
+                console.error('Error retrieving account receivable', err.message);
+                reject(err);
+            } else {
+                let count = rows.length; // Number of unpaid classes
+                console.log('Account receivable retrieved successfully.');
+                resolve(count * 500); // Assuming each unpaid class contributes $50 to the accounts receivable
+            }
+        });
+    });
+}
+
+function storeAllCoachesLocally(){
+      // Get al the user's who's role is a coach and push them into the allCoaches array
+      db.all(`SELECT * FROM Users WHERE Role = 'Coach'`, (err, rows) => {
+        if (err) {
+            console.error('Error retrieving coaches', err.message);
+        } else {
+            rows.forEach((row) => {
+                allCoaches.push(new User(row.UserID, row.FirstName, row.LastName, row.Username, row.Password, row.Email, row.Phone_Number, row.Role));
+            });
+            console.log('Coaches retrieved successfully.');
+        }
+    });
+}
+
+
 // Routes
 app.get("/", async (req, res) => {
     res.render("index.ejs", {});
@@ -227,21 +288,46 @@ app.get("/register", async (req, res) => {
 app.get("/coachDashboard", async (req, res) => {
     res.render("coachDashboard.ejs", {
         allClasses: allClasses
+        
     });
 });
 
 app.get("/memberDashboard", async (req, res) => {
     currentBankDetails = [300, 3];
+
     res.render("memberDashboard.ejs", {
         allClasses: allClasses,
         currentUser: currentUser,
-        currentBankDetails: currentBankDetails
+        currentBankDetails: currentBankDetails,
+        userClasses: userClasses,
+        allMessages: allMessages
     });
 });
 
 app.get("/treasurer", async (req, res) => {
-    res.render("treasurer.ejs", {});
+    try {
+
+        let accountRecievable = await getAllAccountRecievable();
+        let rent = 2000;
+        let coachFee = accountRecievable / 20;
+        let netIncome = accountRecievable - rent - coachFee;
+
+        res.render("treasurer.ejs", {
+            accountRecievable: accountRecievable,
+            rent: rent,
+            coachFee: coachFee,
+            netIncome: netIncome,
+            allCoaches: allCoaches
+        });
+
+    } catch (error) {
+
+        console.error('Failed to calculate account receivable:', error);
+        res.status(500).send("Internal Server Error");
+    
+    }
 });
+
 
 
 app.get("/processPayment", async (req, res) => {
@@ -255,12 +341,51 @@ app.get("/processPayment", async (req, res) => {
     //and send the treasurer back to the treasurer page
     
 });
-app.post("/attendClass", async (req, res) => {
-    // Get the class ID from the form
-    let classID = req.body.classID;
-    //Come back to this
-    console.log("Class ID:", classID);
+
+
+app.post('/sendMessage', (req, res) => {
+    const message = req.body.message; // Access the message sent from the form
+    console.log('Received message:', message);
+    allMessages.push(message);
+    // print all messages
+    console.log('All messages:', allMessages);
 });
+
+
+// Enroll in a class - Member Tab
+app.post("/attendClass", async (req, res) => {
+    let classId = req.body.classId;
+    let userId = currentUser.userId;
+   
+    console.log("Class ID:", classId);
+    console.log("User ID:", userId);
+
+   
+    // Check if the class is already attended by the user
+    db.get(`SELECT * FROM Class_Attendance WHERE ClassID = ? AND UserID = ?`, [classId, currentUser.UserID], (err, row) => {
+        if (err) {
+            console.error('Database error:', err.message);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+        if (row) {
+            // The user has already attended this class, you could increment Times_Attended here
+            return res.status(400).json({ message: 'Already enrolled in class' });
+        } else {
+            // Enroll the user in the class for the first time
+            db.run(`INSERT INTO Class_Attendance (UserID, ClassID, Times_Attended, Times_Paid, Attendance_Status, Pay_Status) VALUES (?, ?, ?, ?, ?, ?)`, [currentUser.UserID, classId, 1, 0, 'Attended', 0], (err) => {
+                if (err) {
+                    console.error('Failed to enroll in class:', err.message);
+                    return res.status(500).json({ message: 'Failed to enroll in class' });
+                } else {
+                    return res.status(200).json({ message: 'Successfully enrolled in class' });
+                }
+            });
+        }
+    });
+
+});
+
+
 
 // Register User
 app.post("/registerUser", async (req, res) => {
@@ -282,12 +407,12 @@ app.post("/registerUser", async (req, res) => {
             function(err) {
                 if (err) {
                     return res.status(500).json({ message: 'Error registering user' });
-                }
-                // User successfully registered
-                
+                }                
             });
         currentUser = new User(FirstName, LastName, Email, Phone_Number, Username, Role);
         currentBankDetails = storeCurrentUserBankDetailsLocally();
+        userClasses = storeCurrentUserClassesAttendanceLocally();
+        storeAllCoachesLocally();
 
         storeCurrentUserBankDetailsLocally();
         if (Role == 'Member') {
@@ -297,8 +422,6 @@ app.post("/registerUser", async (req, res) => {
         } else {
             res.redirect("/treasurer");
         }
-        
-
     });
 });
 
@@ -333,6 +456,9 @@ app.post('/login', (req, res) => {
 
         currentUser = new User(user.UserID, user.FirstName, user.LastName, user.Username, user.Password, user.Email, user.Phone_Number, user.Role);
         currentBankDetails = storeCurrentUserBankDetailsLocally();
+        userClasses = storeCurrentUserClassesAttendanceLocally();
+        storeAllCoachesLocally();
+        
 
         // Login successful
         // Redirect to appropriate dashboard based on user's role
@@ -354,5 +480,6 @@ app.post('/login', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+
 
 

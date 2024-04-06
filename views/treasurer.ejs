@@ -110,30 +110,38 @@
             <tbody>
                 <tr>
                     <td>Rent</td>
-                    <td>$1500</td>
+                    <td>$ <%= rent %></td>
                 </tr>
                 <tr>
                     <td>Coach Fees</td>
-                    <td>$1000</td>
+                    <td>$ <%= coachFee %></td>
+                </tr>
+                <tr>
+                    <td>Miscellaneous</td>
+                    <td>$ 200 </td>
                 </tr>
                 <tr>
                     <td>Revenue</td>
-                    <td>$2500</td>
+                    <td>$ <%= accountRecievable %></td>
                 </tr>
+
             </tbody>
         </table>
-        <h2>Revenue: $2500</h1>
+        <h2> Net Income: $ <%= netIncome - 200 %></h1>
     </div>
     <div class="containerRight">
         <div class="main-container">
             <h1 class="highlight">Coach Management</h1>
-            <div class="card">
-                <h2>Coach 1</h2> 
-                <button type="button" class="btn">Remove</button>
-            </div>
+    
+            <% for(var i = 0; i < allCoaches.length; i++) { %>
+                <div class="card">
+                    <h2>Name: <%= allCoaches[i].firstName %></h2>
+                    <button class="btn">Remove</button>
+                </div>
+            <% } %>
         </div>
-        
     </div>
+    
     
 </body>
 </html>
