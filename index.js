@@ -144,12 +144,12 @@ function insertSampleData() {
     ('John', 'Jim', 'JohnJim321', 'password', 'JohnJim@gmail.com', 4166758721,10, "Member"),
     ('Phil', 'The Horse', 'PhilDaHorse', 'password', 'PhilDaHorse@gmail.com', 6476789090,9, "Member"),
     ('Coach', 'From L4D2', 'CoachfromL4D2', 'password', 'Coach@gmail.com', 4370987890,0, "Member")`, (err) => {
-            if (err) {
-                console.error('Error inserting sample data into Users table', err.message);
-            } else {
-                console.log('Sample data inserted into Users table.');
-            }
-        });
+        if (err) {
+            console.error('Error inserting sample data into Users table', err.message);
+        } else {
+            console.log('Sample data inserted into Users table.');
+        }
+    });
 
     // Insert Classes
     db.run(`INSERT INTO Classes (ClassName, ClassDcript, Coach, Date) VALUES 
@@ -157,13 +157,13 @@ function insertSampleData() {
     ('Intro to Naming thing better', 'it names things but better',  1, '2021-11-01'),
     ('Intro to Naming better things','get better at naming things', 1, '2021-11-02'),
     ('Intro to names 101', 'when you dont know how to name things', 1, '2024-02-02')`, (err) => {
-            if (err) {
-                console.error('Error inserting sample data into Classes table', err.message);
-            } else {
-                console.log('Sample data inserted into Classes table.');
-                storeAllClassesLocally();
-            }
-        });
+        if (err) {
+            console.error('Error inserting sample data into Classes table', err.message);
+        } else {
+            console.log('Sample data inserted into Classes table.');
+            storeAllClassesLocally();
+        }
+    });
 
     // Insert Bank_Details
     db.run(`INSERT INTO Bank_Details (UserID) VALUES
@@ -171,12 +171,12 @@ function insertSampleData() {
     (2),
     (3),
     (4)`, (err) => {
-            if (err) {
-                console.error('Error inserting sample data into Bank_Details table', err.message);
-            } else {
-                console.log('Sample data inserted into Bank_Details table.');
-            }
-        });
+        if (err) {
+            console.error('Error inserting sample data into Bank_Details table', err.message);
+        } else {
+            console.log('Sample data inserted into Bank_Details table.');
+        }
+    });
 
     // Insert Class_Attendance
     db.run(`INSERT INTO Class_Attendance (ClassID, UserID, Times_Attended, Times_Paid, Attendance_Status, Pay_Status) VALUES
@@ -191,17 +191,17 @@ function insertSampleData() {
     (3,4, 1, 1, 'Attended', 1),
     (4,3, 1, 1, 'Attended', 0),
     (4,4, 1, 1, 'Attended', 1)`, (err) => {
-            if (err) {
-                console.error('Error inserting sample data into Class_Attendance table', err.message);
-            } else {
-                console.log('Sample data inserted into Class_Attendance table.');
-                
-            }
-        });
+        if (err) {
+            console.error('Error inserting sample data into Class_Attendance table', err.message);
+        } else {
+            console.log('Sample data inserted into Class_Attendance table.');
+
+        }
+    });
 };
 
 // Function stores all classes in the database into an array
-function storeAllClassesLocally(){
+function storeAllClassesLocally() {
     //query all the classes and store them in an array where each instance of a class is stored in the array
     db.all(`SELECT * FROM Classes`, (err, rows) => {
         if (err) {
@@ -212,10 +212,10 @@ function storeAllClassesLocally(){
             });
             console.log('Classes retrieved successfully.');
         }
-    }); 
+    });
 }
 
-function storeCurrentUserBankDetailsLocally(){
+function storeCurrentUserBankDetailsLocally() {
     db.get(`SELECT * FROM Bank_Details WHERE UserID = ?`, currentUser.UserID, (err, row) => {
         if (err) {
             console.error('Error retrieving bank details', err.message);
@@ -231,7 +231,7 @@ function storeCurrentUserBankDetailsLocally(){
     });
 }
 
-function storeCurrentUserClassesAttendanceLocally(){
+function storeCurrentUserClassesAttendanceLocally() {
     db.all(`SELECT * FROM Class_Attendance WHERE UserID = ?`, currentUser.UserID, (err, rows) => {
         if (err) {
             console.error('Error retrieving user classes', err.message);
@@ -262,9 +262,9 @@ function getAllAccountRecievable() {
     });
 }
 
-function storeAllCoachesLocally(){
-      // Get al the user's who's role is a coach and push them into the allCoaches array
-      db.all(`SELECT * FROM Users WHERE Role = 'Coach'`, (err, rows) => {
+function storeAllCoachesLocally() {
+    // Get al the user's who's role is a coach and push them into the allCoaches array
+    db.all(`SELECT * FROM Users WHERE Role = 'Coach'`, (err, rows) => {
         if (err) {
             console.error('Error retrieving coaches', err.message);
         } else {
@@ -290,7 +290,7 @@ app.get("/register", async (req, res) => {
 app.get("/coachDashboard", async (req, res) => {
     res.render("coachDashboard.ejs", {
         allClasses: allClasses
-        
+
     });
 });
 
@@ -326,7 +326,7 @@ app.get("/treasurer", async (req, res) => {
 
         console.error('Failed to calculate account receivable:', error);
         res.status(500).send("Internal Server Error");
-    
+
     }
 });
 
@@ -341,7 +341,7 @@ app.get("/processPayment", async (req, res) => {
     //Note:
     //When the submit button on the payment processing page is clicked need to update the bank details
     //and send the treasurer back to the treasurer page
-    
+
 });
 
 
@@ -353,16 +353,46 @@ app.post('/sendMessage', (req, res) => {
     console.log('All messages:', allMessages);
 });
 
+// Handle remove 
+app.post("/removeCoach", async (req, res) => {
+    // First find the firstname 
+    // or we can send the firstname from client
+    const id = req.body.userId;
+
+    db.run("DELEtE FROM users WHERE userId = ?;", [id], async (err) => {
+        if (err) {
+            console.error('Something went wrong when deleting user. ', err.message);
+            return res.status(500).json({ message: err.message });
+        } else {
+            // Now we should also change allCoaches 
+            // This function calls db for new data and updates allCoaches
+            const temp = []
+            db.all(`SELECT * FROM Users WHERE Role = 'Coach'`, (err, rows) => {
+                if (err) {
+                    return res.status(500).json({ message: err.message });
+                } else {
+                    rows.forEach((row) => {
+                        temp.push(new User(row.UserID, row.FirstName, row.LastName, row.Username, row.Password, row.Email, row.Phone_Number, row.Role));
+                    })
+                }
+            });
+
+            // This should fix it :D
+            allCoaches = temp;
+            return res.status(200).json({ message: "Good" })
+        }
+    })
+})
 
 // Enroll in a class - Member Tab
 app.post("/attendClass", async (req, res) => {
     let classId = req.body.classId;
     let userId = currentUser.userId;
-   
+
     console.log("Class ID:", classId);
     console.log("User ID:", userId);
 
-   
+
     // Check if the class is already attended by the user
     db.get(`SELECT * FROM Class_Attendance WHERE ClassID = ? AND UserID = ?`, [classId, currentUser.UserID], (err, row) => {
         if (err) {
@@ -392,7 +422,7 @@ app.post("/attendClass", async (req, res) => {
 // Register User
 app.post("/registerUser", async (req, res) => {
     const { FirstName, LastName, Email, Phone_Number, Username, Password, Role } = req.body;
-    
+
     // Check if the email already exists
     db.get(`SELECT * FROM Users WHERE Email = ?`, [Email], (err, user) => {
         if (err) {
@@ -401,15 +431,15 @@ app.post("/registerUser", async (req, res) => {
         if (user) {
             return res.status(400).json({ message: 'Email already exists' });
         }
-        
+
         // If the email doesn't exist, proceed with registration
         db.run(`INSERT INTO Users (FirstName, LastName, Email, Phone_Number, Username, Password, Role) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [FirstName, LastName, Email, Phone_Number, Username, Password, Role],
-            function(err) {
+            function (err) {
                 if (err) {
                     return res.status(500).json({ message: 'Error registering user' });
-                }                
+                }
             });
         currentUser = new User(FirstName, LastName, Email, Phone_Number, Username, Role);
         currentBankDetails = storeCurrentUserBankDetailsLocally();
@@ -460,7 +490,7 @@ app.post('/login', (req, res) => {
         currentBankDetails = storeCurrentUserBankDetailsLocally();
         userClasses = storeCurrentUserClassesAttendanceLocally();
         storeAllCoachesLocally();
-        
+
 
         // Login successful
         // Redirect to appropriate dashboard based on user's role
@@ -472,7 +502,7 @@ app.post('/login', (req, res) => {
         } else {
             res.redirect("/treasurer");
         }
-        
+
     });
 });
 
