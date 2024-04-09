@@ -130,6 +130,26 @@
         <h2> Net Income: $ <%= netIncome - 200 %></h1>
     </div>
     <div class="containerRight">
+        <h1 class="highlight">Monthly Revenue Statement</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Total Member Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i = 0; i < months.length; i++) { %>
+                    <tr>
+                        <td><%= months[i]%></td>
+                        <td>$<%= monthRev[i]%></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="containerRight">
         <div class="main-container">
             <h1 class="highlight">Coach Management</h1>
     

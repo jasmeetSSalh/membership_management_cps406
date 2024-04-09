@@ -166,11 +166,11 @@ function insertSampleData() {
         });
 
     // Insert Bank_Details
-    db.run(`INSERT INTO Bank_Details (UserID) VALUES
-    (1),
-    (2),
-    (3),
-    (4)`, (err) => {
+    db.run(`INSERT INTO Bank_Details (UserID, Expenses) VALUES
+    (1,20.50),
+    (2,20.50),
+    (3,20.50),
+    (4,20.50)`, (err) => {
             if (err) {
                 console.error('Error inserting sample data into Bank_Details table', err.message);
             } else {
@@ -249,7 +249,7 @@ function storeCurrentUserClassesAttendanceLocally(){
 // Function to get all account receivable for the treasurer
 function getAllAccountRecievable() {
     return new Promise((resolve, reject) => {
-        db.all(`SELECT * FROM Class_Attendance WHERE Pay_Status = 0`, (err, rows) => {
+        db.all(`SELECT * FROM Class_Attendance WHERE Pay_Status = 1`, (err, rows) => {
             if (err) {
                 console.error('Error retrieving account receivable', err.message);
                 reject(err);
@@ -262,6 +262,45 @@ function getAllAccountRecievable() {
     });
 }
 
+//mouthly
+function formatMonth(month) {
+    let monthInt = parseInt(month, 10);
+    return monthInt < 10 ? `0${monthInt}` : `${monthInt}`;
+}
+
+async function getAllAccountRecievableMonth() {
+    let monthlyIncome = new Array(12).fill(0);
+    const query = `SELECT sum(Expenses) as MonthExpenses FROM Class_Attendance
+                   INNER JOIN Classes ON Class_Attendance.ClassID = Classes.ClassID
+                   INNER JOIN Bank_Details ON Class_Attendance.UserID = Bank_Details.UserID
+                   WHERE strftime('%m', Classes.Date) = ? AND Pay_Status = 1`;
+
+    const promises = monthlyIncome.map((_, index) => {
+        return new Promise((resolve, reject) => {
+            db.all(query, [formatMonth(index + 1)], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result.length > 0 ? result[0].MonthExpenses || 0 : 0);
+                }
+            });
+        });
+    });
+
+    try {
+        const results = await Promise.all(promises);
+        return results.map((value, index) => {
+            const intValue = parseInt(value, 10);
+            return isNaN(intValue) ? 0 : intValue;
+        });
+    } catch (error) {
+        console.error("Error calculating monthly income:", error);
+        return monthlyIncome; // Return the initial array on error
+    }
+}
+
+
+
 function storeAllCoachesLocally(){
       // Get al the user's who's role is a coach and push them into the allCoaches array
       db.all(`SELECT * FROM Users WHERE Role = 'Coach'`, (err, rows) => {
@@ -272,6 +311,8 @@ function storeAllCoachesLocally(){
                 allCoaches.push(new User(row.UserID, row.FirstName, row.LastName, row.Username, row.Password, row.Email, row.Phone_Number, row.Role));
             });
             console.log('Coaches retrieved successfully.');
+            console.log('Coaches' + allCoaches);
+
         }
     });
 }
@@ -313,13 +354,21 @@ app.get("/treasurer", async (req, res) => {
         let rent = 2000;
         let coachFee = accountRecievable / 20;
         let netIncome = accountRecievable - rent - coachFee;
+        let monthRev =  await getAllAccountRecievableMonth();
+        let months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+
+        console.log("Monthly Income: back end" + monthRev);
+        console.log("All coaches backend" + allCoaches.length);
 
         res.render("treasurer.ejs", {
             accountRecievable: accountRecievable,
             rent: rent,
             coachFee: coachFee,
             netIncome: netIncome,
-            allCoaches: allCoaches
+            allCoaches: allCoaches,
+            monthRev: monthRev,
+            months: months
+
         });
 
     } catch (error) {
