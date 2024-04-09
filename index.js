@@ -320,7 +320,7 @@ function storeAllCoachesLocally(){
 
 // Routes
 app.get("/", async (req, res) => {
-    res.render("index.ejs", {});
+    res.render("index.ejs", {error: false});
 
 });
 
@@ -481,7 +481,7 @@ app.post("/registerUser", async (req, res) => {
 app.post('/login', (req, res) => {
     console.log("Request Body:", req.body);
 
-    const { username, password } = req.body;
+    const { username, password} = req.body;
 
     console.log("Logging in:", username);
     console.log("Password:", password);
@@ -493,17 +493,12 @@ app.post('/login', (req, res) => {
             return res.status(500).json({ message: 'Error logging in' });
         }
 
-        // Check if user exists
-        if (!user) {
-            console.log("User not found:", username);
-            return res.status(404).json({ message: 'User not found' });
+        // Check if user exists and password is correct
+        if (!user || password !== user.Password) {
+            // Render the login page with an error message
+            return res.render("index.ejs", { error: "Incorrect Password or Username" });
         }
 
-        // Compare passwords
-        if (password !== user.Password) {
-            console.log("Incorrect password for:", username);
-            return res.status(401).json({ message: 'Incorrect password' });
-        }
 
         currentUser = new User(user.UserID, user.FirstName, user.LastName, user.Username, user.Password, user.Email, user.Phone_Number, user.Role);
         currentBankDetails = storeCurrentUserBankDetailsLocally();
