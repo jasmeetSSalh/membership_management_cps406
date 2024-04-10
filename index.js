@@ -311,7 +311,7 @@ function storeAllCoachesLocally() {
                 allCoaches.push(new User(row.UserID, row.FirstName, row.LastName, row.Username, row.Password, row.Email, row.Phone_Number, row.Role));
             });
             console.log('Coaches retrieved successfully.');
-            console.log('Coaches' + allCoaches);
+            // console.log('Coaches' + allCoaches);
 
         }
     });
@@ -357,8 +357,8 @@ app.get("/treasurer", async (req, res) => {
         let monthRev = await getAllAccountRecievableMonth();
         let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-        console.log("Monthly Income: back end" + monthRev);
-        console.log("All coaches backend" + allCoaches.length);
+        // console.log("Monthly Income: back end" + monthRev);
+        // console.log("All coaches backend" + allCoaches.length);
 
         res.render("treasurer.ejs", {
             accountRecievable: accountRecievable,
