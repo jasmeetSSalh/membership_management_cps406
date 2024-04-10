@@ -17,6 +17,15 @@
             align-items: center;
         }
 
+        .logo-right {
+            position: absolute;
+            top: 10px; /* Adjust the top position as needed */
+            left: 10px; /* Adjust the left position as needed */
+            height: auto;
+            width: 150px; /* Adjust the width as needed */
+            z-index: 999; /* Ensure the logo appears above other elements */
+        }
+
         body {
             background-color: #F1F6F9;
             color: #F6ECA9;
@@ -60,13 +69,8 @@
             border-radius: 8px;
         }
 
-        .logo-right {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            height: 180px;
-            width: auto;
-        }
+        
+
 
 
         .btn {
@@ -101,13 +105,29 @@
             width: calc(100% - 18px);
             margin-bottom: 10px;
         }
+
+        .auth-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .auth-buttons button {
+            margin-left: 5px;
+        }
+
     </style>
 </head>
 
 <body>
     <header>
         <h1>Welcome!</h1>
+        <div class="auth-buttons">
+            <button class="btn" id="loginBtn">Login</button>
+            <button class="btn" id="registerBtn">Register</button>
+        </div>
     </header>
+    
     <div class="containerLeft">
         <div class="main-container">
             <h1 class="highlight">Class Management System</h1>
@@ -191,6 +211,15 @@
             document.getElementById("redirectButton").addEventListener("click", function () {
                 window.location.href = "/processPayment";
             });
+
+            document.getElementById("loginBtn").addEventListener("click", function () {
+                window.location.href = "/";
+            });
+
+            document.getElementById("registerBtn").addEventListener("click", function () {
+                window.location.href = "/register";
+            });
+            
         });
     </script>
 </body>
