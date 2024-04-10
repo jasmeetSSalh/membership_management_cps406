@@ -66,6 +66,14 @@
             border-radius: 8px;
         }
 
+        .logo-right {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 300px;
+            width: auto;
+        }
+
 
 
 
@@ -142,21 +150,24 @@
             <tbody>
                 <tr>
                     <td>Rent</td>
-                    <td>$ <%= rent %>
-                    </td>
+                    <td> <span style="color: red;">
+                            $ <%= rent %>
+                        </span></td>
                 </tr>
                 <tr>
                     <td>Coach Fees</td>
-                    <td>$ <%= coachFee %>
+                    <td><span style="color: red;">
+                            $ <%= coachFee %>
                     </td>
                 </tr>
                 <tr>
                     <td>Miscellaneous</td>
-                    <td>$ 200 </td>
+                    <td> <span style="color: red;">$ 200</span> </td>
                 </tr>
                 <tr>
                     <td>Revenue</td>
-                    <td>$ <%= accountRecievable %>
+                    <td><span style="color: rgb(87, 225, 87);">
+                            $ <%= accountRecievable %>
                     </td>
                 </tr>
 
@@ -189,6 +200,8 @@
     </div>
 
     <div class="containerRight">
+        <img src="https://cdn.discordapp.com/attachments/1214014972955463750/1227401363902828616/scuffed_background.png?ex=66284599&is=6615d099&hm=d9368342a131b03ee54642b35759451ec129f2ec61901799d10cc21d09ea0a09&"
+            alt="Your Logo" class="logo-right">
         <div class="main-container">
             <h1 class="highlight">Coach Management</h1>
 
