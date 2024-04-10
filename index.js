@@ -513,11 +513,12 @@ app.post('/login', (req, res) => {
 
     const { username, password } = req.body;
 
-    console.log("Logging in:", username);
-    console.log("Password:", password);
+    // console.log("Logging in:", username);
+    // console.log("Password:", password);
 
     // Retrieve user from the database
     db.get(`SELECT * FROM Users WHERE Username = ?`, [username], (err, user) => {
+
         if (err) {
             console.error('Error retrieving user:', err);
             return res.status(500).json({ message: 'Error logging in' });
