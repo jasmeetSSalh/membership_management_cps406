@@ -392,15 +392,8 @@ app.get("/treasurer", async (req, res) => {
         let monthRev = await getAllAccountRecievableMonth();
         let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-<<<<<<< HEAD
         // console.log("Monthly Income: back end" + monthRev);
         // console.log("All coaches backend" + allCoaches.length);
-=======
-        console.log("Monthly Income: back end" + monthRev);
-        console.log("All coaches backend" + allCoaches.length);
-        console.log("UnPaidDebt backend" + UnPaidDebt);
-
->>>>>>> unpaid-list
 
         res.render("treasurer.ejs", {
             accountRecievable: accountRecievable,
