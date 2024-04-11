@@ -318,6 +318,38 @@ function storeAllCoachesLocally() {
     });
 }
 
+async function getPastUnPaid() {
+    return new Promise((resolve, reject) => {
+        //let query = `SELECT * FROM Class_Attendance`;
+        let date = new Date();
+        let arr = []
+        let query = `SELECT Username, FirstName, LastName, ClassName, Date, Expenses from Class_Attendance 
+        inner join Users on Class_Attendance.UserID = Users.UserID 
+        inner join Classes on Class_Attendance.ClassID = Classes.ClassID
+        inner join Bank_Details on Class_Attendance.UserID = Bank_Details.UserID
+        where Pay_Status = 0 and Classes.Date  < date('${date.getFullYear().toString()}-${formatMonth(date.getMonth())}-01')`
+
+        db.all(query, (err, result) => {
+            if (err) {
+                console.error("Error retrieving unpaid classes:", err);
+                reject(err);
+            } else {
+                if (result && result.length > 0) {
+                    //console.log("Unpaid classes:", result);
+                    result.forEach((row) => {
+                        arr.push(row);
+                    });
+                    //console.log(arr);
+                    resolve(arr);
+                } else {
+                    //console.log("No unpaid classes found.");
+                    resolve([]);
+                }
+            }
+        });
+    });
+}
+
 
 // Routes
 app.get("/", async (req, res) => {
