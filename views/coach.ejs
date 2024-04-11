@@ -123,10 +123,6 @@
 <body>
     <header>
         <h1>Welcome, Coach!</h1>
-        <div class="auth-buttons">
-            <button class="btn" id="loginBtn">Login</button>
-            <button class="btn" id="registerBtn">Register</button>
-        </div>
         <img src="https://cdn.discordapp.com/attachments/1214014972955463750/1227401363902828616/scuffed_background.png?ex=66284599&is=6615d099&hm=d9368342a131b03ee54642b35759451ec129f2ec61901799d10cc21d09ea0a09&"
             alt="Your Logo" class="logo-right">
     </header>
@@ -137,7 +133,7 @@
                 <div class="card">
                     <h2>Class: <%= allClasses[i].className %></h2>
                     <p>Description: <%= allClasses[i].classDescription %></p>
-                    <button type="button" class="btn" id="attendBtn<%= i %>"
+                    <button type="button" class="btn" id="viewBtn<%= i %>"
                         data-class-id="<%= allClasses[i].classId %>">View Members</button> <!-- Corrected typo in "Members" -->
                 </div>
             <% } %>
@@ -197,19 +193,8 @@
                     console.log(classId);
                 });
             });
-            // Redirect to payment page
-            document.getElementById("redirectButton").addEventListener("click", function () {
-                window.location.href = "/processPayment";
-            });
         });
 
-        document.getElementById("loginBtn").addEventListener("click", function () {
-                window.location.href = "/";
-            });
-
-        document.getElementById("registerBtn").addEventListener("click", function () {
-            window.location.href = "/register";
-        });
     </script>
 
 </body>
