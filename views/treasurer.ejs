@@ -4,7 +4,7 @@
 <head>
     <title>Dashboard</title>
     <style>
-         header {
+        header {
             background-color: #212A3E;
             width: 20%;
             border-radius: 10px;
@@ -19,11 +19,15 @@
 
         .logo-right {
             position: absolute;
-            top: 10px; /* Adjust the top position as needed */
-            left: 10px; /* Adjust the left position as needed */
+            top: 10px;
+            /* Adjust the top position as needed */
+            left: 10px;
+            /* Adjust the left position as needed */
             height: auto;
-            width: 150px; /* Adjust the width as needed */
-            z-index: 999; /* Ensure the logo appears above other elements */
+            width: 150px;
+            /* Adjust the width as needed */
+            z-index: 999;
+            /* Ensure the logo appears above other elements */
         }
 
         body {
@@ -69,7 +73,7 @@
             border-radius: 8px;
         }
 
-        
+
 
 
 
@@ -230,17 +234,18 @@
                             <%= UnPaidDebt[i].Username%>
                         </td>
                         <td>
-                            <%= UnPaidDebt[i].FirstName%> <%= UnPaidDebt[i].LastName%>
+                            <%= UnPaidDebt[i].FirstName%>
+                                <%= UnPaidDebt[i].LastName%>
                         </td>
                         <td>
-                            <%= UnPaidDebt[i].ClassName%> 
+                            <%= UnPaidDebt[i].ClassName%>
                         </td>
                         <td>
                             <%= UnPaidDebt[i].Date%>
                         </td>
-                        <td> 
+                        <td>
                             <span style="color: red;">
-                            $ <%= UnPaidDebt[i].Expenses%>
+                                $ <%= UnPaidDebt[i].Expenses%>
                             </span>
                         </td>
                     </tr>
@@ -266,17 +271,18 @@
                             <%= paidAdvance[i].Username%>
                         </td>
                         <td>
-                            <%= paidAdvance[i].FirstName%> <%= paidAdvance[i].LastName%>
+                            <%= paidAdvance[i].FirstName%>
+                                <%= paidAdvance[i].LastName%>
                         </td>
                         <td>
-                            <%= paidAdvance[i].ClassName%> 
+                            <%= paidAdvance[i].ClassName%>
                         </td>
                         <td>
                             <%= paidAdvance[i].Date%>
                         </td>
-                        <td> 
-                            <span style="color: green;">
-                            $ <%= paidAdvance[i].Expenses%>
+                        <td>
+                            <span style="color: rgb(87, 225, 87);">
+                                $ <%= paidAdvance[i].Expenses%>
                             </span>
                         </td>
                     </tr>
@@ -301,7 +307,7 @@
     </div>
     <script>
 
-        
+
 
         async function remove(id) {
             try {
@@ -326,15 +332,15 @@
             }
         }
 
-       
-            document.getElementById("loginBtn").addEventListener("click", function () {
-                window.location.href = "/";
-            });
 
-            document.getElementById("registerBtn").addEventListener("click", function () {
-                window.location.href = "/register";
-            });
-            
+        document.getElementById("loginBtn").addEventListener("click", function () {
+            window.location.href = "/";
+        });
+
+        document.getElementById("registerBtn").addEventListener("click", function () {
+            window.location.href = "/register";
+        });
+
 
     </script>
 

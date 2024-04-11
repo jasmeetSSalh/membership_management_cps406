@@ -19,11 +19,15 @@
 
         .logo-right {
             position: absolute;
-            top: 10px; /* Adjust the top position as needed */
-            left: 10px; /* Adjust the left position as needed */
+            top: 10px;
+            /* Adjust the top position as needed */
+            left: 10px;
+            /* Adjust the left position as needed */
             height: auto;
-            width: 150px; /* Adjust the width as needed */
-            z-index: 999; /* Ensure the logo appears above other elements */
+            width: 150px;
+            /* Adjust the width as needed */
+            z-index: 999;
+            /* Ensure the logo appears above other elements */
         }
 
         body {
@@ -69,7 +73,7 @@
             border-radius: 8px;
         }
 
-        
+
 
 
 
@@ -115,7 +119,6 @@
         .auth-buttons button {
             margin-left: 5px;
         }
-
     </style>
 </head>
 
@@ -127,7 +130,7 @@
             <button class="btn" id="registerBtn">Register</button>
         </div>
     </header>
-    
+
     <div class="containerLeft">
         <div class="main-container">
             <h1 class="highlight">Class Management System</h1>
@@ -168,7 +171,7 @@
             <div class="card payment-window">
                 <label for="amount">All Messages</label>
                 <% for (let i=0; i < allMessages.length; i++) { %>
-                    <input type="text" id="amount" name="amount" value="<%= allMessages[i] %>" readonly>
+                    <input type="text" id="amount" name="amount" value="<%= allMessages[i].toUpperCase() %>" readonly>
                     <% } %>
                         <br>
             </div>
@@ -219,7 +222,7 @@
             document.getElementById("registerBtn").addEventListener("click", function () {
                 window.location.href = "/register";
             });
-            
+
         });
     </script>
 </body>
