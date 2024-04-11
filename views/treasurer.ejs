@@ -188,7 +188,7 @@
         <h2> Net Income: $ <%= netIncome - 200 %>
                 </h1>
     </div>
-    <div class="containerRight">
+    <div class="containerLeft">
         <h1 class="highlight">Monthly Revenue Statement</h1>
         <table>
             <thead>
@@ -209,6 +209,45 @@
                     <% } %>
             </tbody>
         </table>
+    </div>
+    <div class="containerLeft">
+        <h1 class="highlight">Unpaid Debt</h1>
+        <h2 class="highlight">Unpaid Classes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Class Unpaid</th>
+                    <th>Date of Unpaid Class</th>
+                    <th>Money Owed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < UnPaidDebt.length; i++) { %>
+                    <tr>
+                        <td>
+                            <%= UnPaidDebt[i].Username%>
+                        </td>
+                        <td>
+                            <%= UnPaidDebt[i].FirstName%> <%= UnPaidDebt[i].LastName%>
+                        </td>
+                        <td>
+                            <%= UnPaidDebt[i].ClassName%> 
+                        </td>
+                        <td>
+                            <%= UnPaidDebt[i].Date%>
+                        </td>
+                        <td> 
+                            <span style="color: red;">
+                            $ <%= UnPaidDebt[i].Expenses%>
+                            </span>
+                        </td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
+        <h2>Unpaid Coach Fees: $ 0</h2>
     </div>
 
     <div class="containerRight">
