@@ -183,17 +183,16 @@ function insertSampleData() {
     // Insert Class_Attendance
     //memebersIDs are 3,5,6,7
     db.run(`INSERT INTO Class_Attendance (ClassID, UserID, Times_Attended, Times_Paid, Attendance_Status, Pay_Status) VALUES
-    (1, 5, 1, 1, 'Attended', 0),
-    (1, 3, 1, 1, 'Attended', 0),
-    (1, 4, 1, 1, 'Attended', 1),
-    (1, 4, 1, 1, 'Attended', 1),
-    (2, 5, 1, 1, 'Attended', 0),
+    (1, 5, 3, 1, 'Attended', 0),
+    (1, 3, 2, 1, 'Attended', 0),
+    (1, 4, 4, 1, 'Attended', 1),
+    (2, 5, 2, 1, 'Attended', 0),
     (2, 2, 1, 1, 'Attended', 0),
-    (2, 3, 1, 1, 'Attended', 1),
+    (2, 3, 3, 1, 'Attended', 1),
     (3, 6, 1, 1, 'Attended', 0),
     (3, 6, 1, 1, 'Attended', 1),
-    (4, 3, 1, 1, 'Attended', 0),
-    (4, 6, 1, 1, 'Attended', 1),
+    (4, 3, 4, 1, 'Attended', 0),
+    (4, 6, 3, 1, 'Attended', 1),
     (4, 7, 1, 1, 'Attended', 0)`, (err) => {
         if (err) {
             console.error('Error inserting sample data into Class_Attendance table', err.message);
@@ -562,11 +561,36 @@ async function displayUserIdsForClass(classId) {
     }
 }
 
+function filterByFrequency(classid){
+    return new Promise((resolve, reject) => {
+        let ClassID = parseInt(classid);
+        let query = `select FirstName, Email, Phone_Number, Times_Attended from Class_Attendance inner join Users on Class_Attendance.UserID = Users.UserID
+        where ClassID = ${ClassID} 
+        order by Times_Attended DESC`;
+        let arr = [];
+
+        db.all(query,(err,result) => {
+            if (err){
+                console.log("didnt get the filtered whoopsies");
+                reject(err);
+            } else {
+                //console.log("filter by freuency");
+                //console.log(result);
+                result.forEach((row) => {
+                    arr.push(row);
+                });
+                resolve(arr);
+            }
+        });
+    });
+}
+
 let allUsers = []; // Declared outside the routes to make it accessible globally
 
 app.post("/showMembers", async (req, res) => {
     let classId = req.body.classId;
     allUsers = await displayUserIdsForClass(classId); // Update the global allUsers array
+    //filterByFrequency(classId);
     console.log(allUsers);
     // Redirect to the GET route without passing allUsers as a query parameter
     res.redirect("/showMembers");
@@ -574,6 +598,7 @@ app.post("/showMembers", async (req, res) => {
 
 app.get("/showMembers", async (req, res) => {
     // Render the template using the global allUsers array
+    console.log(allUsers.length);
     res.render("showMembers.ejs", {
         allUsers: allUsers
     });
