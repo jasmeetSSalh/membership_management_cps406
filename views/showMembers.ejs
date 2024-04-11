@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+    <style>
+        header {
+            background-color: #212A3E;
+            width: 20%;
+            border-radius: 10px;
+            color: #F6ECA9;
+            text-align: center;
+            padding: 10px;
+            margin: 3% auto 2%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-right {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            height: auto;
+            width: 150px;
+            z-index: 999;
+        }
+
+        body {
+            background-color: #F1F6F9;
+            color: #F6ECA9;
+            font-family: Arial, sans-serif;
+        }
+
+        .containerLeft {
+            float: left;
+            width: 90%;
+            margin-left: 2%;
+            background-color: #212A3E;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .containerRight {
+            float: right;
+            width: 45%;
+            margin-right: 2%;
+            margin-top: 2%;
+            background-color: #212A3E;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+
+        .card {
+            background-color: #394867;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .payment-window {
+            background-color: #394867;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        label {
+            color: #F6ECA9;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            color: #333;
+            width: calc(100% - 18px);
+            margin-bottom: 10px;
+        }
+
+        .auth-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .auth-buttons button {
+            margin-left: 5px;
+        }
+
+        table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #394867;
+        color: #F6ECA9;
+    }
+
+    tr:nth-child(even) {
+        background-color: #394867;
+    }
+
+    /* Button styles */
+    .btn {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin-top: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #45a049;
+    }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Member List!</h1>
+        <div class="auth-buttons">
+            <button class="btn" id="loginBtn">Login</button>
+            <button class="btn" id="registerBtn">Register</button>
+        </div>
+    </header>
+    <div class="containerLeft">
+        <h2>User Information</h2>
+        <table>
+            <tr>
+                <th>First Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+            </tr>
+            <% for (let i = 0; i < allUsers.length; i++) { %>
+                <tr>
+                    <td><%= allUsers[i].firstName %></td>
+                    <td><%= allUsers[i].email %></td>
+                    <td><%= allUsers[i].phone %></td>
+                    <td><h6>button1</h6></td>
+                    <td><h6>button2</h6></td>
+                </tr>
+            <% } %>
+        </table>
+    </div>
+    <script>
+        document.getElementById("loginBtn").addEventListener("click", function () {
+            window.location.href = "/";
+        });
+
+        document.getElementById("registerBtn").addEventListener("click", function () {
+            window.location.href = "/register";
+        });
+    </script>
+</body>
+
+</html>

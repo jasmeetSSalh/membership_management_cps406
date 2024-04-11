@@ -4,21 +4,26 @@
 <head>
     <title>Dashboard</title>
     <style>
-        header {
+         header {
             background-color: #212A3E;
             width: 20%;
             border-radius: 10px;
             color: #F6ECA9;
             text-align: center;
             padding: 10px;
-            margin: 5% auto 10%;
-            /* Updated margin to center vertically and horizontally */
+            margin: 3% auto 2%;
             display: flex;
-            /* Use flexbox */
             justify-content: center;
-            /* Center horizontally */
             align-items: center;
-            /* Center vertically */
+        }
+
+        .logo-right {
+            position: absolute;
+            top: 10px; /* Adjust the top position as needed */
+            left: 10px; /* Adjust the left position as needed */
+            height: auto;
+            width: 150px; /* Adjust the width as needed */
+            z-index: 999; /* Ensure the logo appears above other elements */
         }
 
         body {
@@ -29,7 +34,7 @@
 
         .containerLeft {
             float: left;
-            width: 50%;
+            width: 45%;
             margin-left: 2%;
             background-color: #212A3E;
             padding: 20px;
@@ -38,7 +43,7 @@
 
         .containerRight {
             float: right;
-            width: 40%;
+            width: 45%;
             margin-right: 2%;
             margin-top: 2%;
             background-color: #212A3E;
@@ -55,57 +60,60 @@
             margin: 10px;
             padding: 10px;
             border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
         }
 
         .payment-window {
-            background-color: #F6ECA9;
+            background-color: #394867;
             margin: 10px;
             padding: 10px;
             border-radius: 8px;
         }
 
-        .logo-right {
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            height: 200px;
-            width: auto;
-        }
-
-
-
+        
 
 
 
         .btn {
             background-color: #4CAF50;
-            /* Green background */
             border: none;
-            /* Remove borders */
             color: white;
-            /* White text */
             padding: 15px 30px;
-            /* Padding */
             text-align: center;
-            /* Center text */
             text-decoration: none;
-            /* Remove underline */
             display: inline-block;
-            /* Display as inline-block */
             font-size: 16px;
-            /* Font size */
             cursor: pointer;
-            /* Cursor on hover */
             border-radius: 5px;
-            /* Rounded corners */
         }
 
-        /* Hover effect */
         .btn:hover {
             background-color: #45a049;
-            /* Darker green */
+        }
+
+        label {
+            color: #F6ECA9;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            color: #333;
+            width: calc(100% - 18px);
+            margin-bottom: 10px;
+        }
+
+        .auth-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .auth-buttons button {
+            margin-left: 5px;
         }
 
         /* CSS styling for the table */
@@ -136,6 +144,10 @@
 <body>
     <header>
         <h1>Welcome Treasurer!</h1>
+        <div class="auth-buttons">
+            <button class="btn" id="loginBtn">Login</button>
+            <button class="btn" id="registerBtn">Register</button>
+        </div>
     </header>
     <div class="containerLeft">
 
@@ -215,6 +227,9 @@
         </div>
     </div>
     <script>
+
+        
+
         async function remove(id) {
             try {
                 console.log(id)
@@ -237,6 +252,16 @@
                 console.error('There was a problem with the fetch operation:', error);
             }
         }
+
+       
+            document.getElementById("loginBtn").addEventListener("click", function () {
+                window.location.href = "/";
+            });
+
+            document.getElementById("registerBtn").addEventListener("click", function () {
+                window.location.href = "/register";
+            });
+            
 
     </script>
 

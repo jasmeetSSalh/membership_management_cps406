@@ -4,7 +4,7 @@
 <head>
     <title>Dashboard</title>
     <style>
-        header {
+         header {
             background-color: #212A3E;
             width: 20%;
             border-radius: 10px;
@@ -117,60 +117,51 @@
         }
 
     </style>
+
 </head>
 
 <body>
     <header>
-        <h1>Welcome!</h1>
+        <h1>Welcome, Coach!</h1>
         <div class="auth-buttons">
             <button class="btn" id="loginBtn">Login</button>
             <button class="btn" id="registerBtn">Register</button>
         </div>
+        <img src="https://cdn.discordapp.com/attachments/1214014972955463750/1227401363902828616/scuffed_background.png?ex=66284599&is=6615d099&hm=d9368342a131b03ee54642b35759451ec129f2ec61901799d10cc21d09ea0a09&"
+            alt="Your Logo" class="logo-right">
     </header>
-    
     <div class="containerLeft">
         <div class="main-container">
             <h1 class="highlight">Class Management System</h1>
-            <% for (let i=0; i < allClasses.length; i++) { %>
+            <% for (let i = 0; i < allClasses.length; i++) { %>
                 <div class="card">
-                    <h2>
-                        <%= allClasses[i].className %>
-                    </h2>
-                    <p>
-                        <%= allClasses[i].classDescription %>
-                    </p>
+                    <h2>Class: <%= allClasses[i].className %></h2>
+                    <p>Description: <%= allClasses[i].classDescription %></p>
                     <button type="button" class="btn" id="attendBtn<%= i %>"
-                        data-class-id="<%= allClasses[i].classId %>">Attend Class</button>
-
+                        data-class-id="<%= allClasses[i].classId %>">View Members</button> <!-- Corrected typo in "Members" -->
                 </div>
-                <% } %>
+            <% } %>
         </div>
     </div>
     <div class="containerRight">
         <div class="main-container">
-            <h1 class="highlight">Payment Information</h1>
-            <div class="card payment-window">
-                <label for="amount">Payment Missed:</label>
-                <input type="text" id="amount" name="amount" value="<%= currentBankDetails[1] %>" readonly>
-                <br>
-                <label for="amount">Payment Due:</label>
-                <input type="text" id="amount" name="amount" value="$<%= currentBankDetails[0] %>" readonly>
-                <br>
-                <button id="redirectButton" class="btn">Pay Now</button>
+            <h1 class="highlight">Payment</h1>
+            <div class="card">
+                <h2>Class Taught In This Month:</h2> <!-- Added closing tag for <h2> -->
+                <h2>Next Class:</h2> <!-- Added closing tag for <h2> -->
             </div>
         </div>
     </div>
     <div class="containerRight">
-        <img src="https://cdn.discordapp.com/attachments/1214014972955463750/1227401363902828616/scuffed_background.png?ex=66284599&is=6615d099&hm=d9368342a131b03ee54642b35759451ec129f2ec61901799d10cc21d09ea0a09&"
-            alt="Your Logo" class="logo-right">
         <div class="main-container">
-            <h1 class="highlight">Message Board</h1>
-            <div class="card payment-window">
-                <label for="amount">All Messages</label>
-                <% for (let i=0; i < allMessages.length; i++) { %>
-                    <input type="text" id="amount" name="amount" value="<%= allMessages[i] %>" readonly>
-                    <% } %>
-                        <br>
+            <h1 class="highlight">Send Message To All Members:</h1> <!-- Corrected typo in "Members" -->
+            <div class="card">
+                <form action="/sendMessage" method="POST"> <!-- Add form with action and method -->
+                    <h2>Message:</h2> <!-- Added closing tag for <h2> -->
+                    <textarea name="message" rows="4" cols="50"></textarea> <!-- Add name attribute to textarea -->
+                    <br>
+                    <button type="submit" class="btn">Send</button> <!-- Change button type to submit -->
+                </form>
             </div>
         </div>
     </div>
@@ -179,7 +170,7 @@
         // Function to send POST request with classId
         async function sendClassId(classId) {
             try {
-                const response = await fetch('/attendClass', { // Replace '/your-endpoint' with your actual endpoint
+                const response = await fetch('/showMembers', { // Replace '/your-endpoint' with your actual endpoint
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -196,32 +187,31 @@
             }
         }
 
-        // Wait for the DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function () {
             // Select all buttons and add an event listener to each
             Array.from(document.querySelectorAll('.btn')).forEach(button => {
                 button.addEventListener('click', function () {
                     const classId = this.getAttribute('data-class-id'); // Get classId from the button
                     sendClassId(classId); // Send classId with the POST request
+                    window.location.href = "/showMemberss";
                     console.log(classId);
                 });
             });
-
             // Redirect to payment page
             document.getElementById("redirectButton").addEventListener("click", function () {
                 window.location.href = "/processPayment";
             });
+        });
 
-            document.getElementById("loginBtn").addEventListener("click", function () {
+        document.getElementById("loginBtn").addEventListener("click", function () {
                 window.location.href = "/";
             });
 
-            document.getElementById("registerBtn").addEventListener("click", function () {
-                window.location.href = "/register";
-            });
-            
+        document.getElementById("registerBtn").addEventListener("click", function () {
+            window.location.href = "/register";
         });
     </script>
+
 </body>
 
 </html>
