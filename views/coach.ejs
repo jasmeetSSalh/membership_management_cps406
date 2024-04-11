@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+    <style>
+         header {
+            background-color: #212A3E;
+            width: 20%;
+            border-radius: 10px;
+            color: #F6ECA9;
+            text-align: center;
+            padding: 10px;
+            margin: 3% auto 2%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-right {
+            position: absolute;
+            top: 10px; /* Adjust the top position as needed */
+            left: 10px; /* Adjust the left position as needed */
+            height: auto;
+            width: 150px; /* Adjust the width as needed */
+            z-index: 999; /* Ensure the logo appears above other elements */
+        }
+
+        body {
+            background-color: #F1F6F9;
+            color: #F6ECA9;
+            font-family: Arial, sans-serif;
+        }
+
+        .containerLeft {
+            float: left;
+            width: 45%;
+            margin-left: 2%;
+            background-color: #212A3E;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .containerRight {
+            float: right;
+            width: 45%;
+            margin-right: 2%;
+            margin-top: 2%;
+            background-color: #212A3E;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .highlight {
+            color: #F6ECA9;
+        }
+
+        .card {
+            background-color: #394867;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .payment-window {
+            background-color: #394867;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        
+
+
+
+        .btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        label {
+            color: #F6ECA9;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            color: #333;
+            width: calc(100% - 18px);
+            margin-bottom: 10px;
+        }
+
+        .auth-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .auth-buttons button {
+            margin-left: 5px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <h1>Welcome, Coach!</h1>
+        <div class="auth-buttons">
+            <button class="btn" id="loginBtn">Login</button>
+            <button class="btn" id="registerBtn">Register</button>
+        </div>
+        <img src="https://cdn.discordapp.com/attachments/1214014972955463750/1227401363902828616/scuffed_background.png?ex=66284599&is=6615d099&hm=d9368342a131b03ee54642b35759451ec129f2ec61901799d10cc21d09ea0a09&"
+            alt="Your Logo" class="logo-right">
+    </header>
+    <div class="containerLeft">
+        <div class="main-container">
+            <h1 class="highlight">Class Management System</h1>
+            <% for (let i = 0; i < allClasses.length; i++) { %>
+                <div class="card">
+                    <h2>Class: <%= allClasses[i].className %></h2>
+                    <p>Description: <%= allClasses[i].classDescription %></p>
+                    <button type="button" class="btn" id="attendBtn<%= i %>"
+                        data-class-id="<%= allClasses[i].classId %>">View Members</button> <!-- Corrected typo in "Members" -->
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <div class="containerRight">
+        <div class="main-container">
+            <h1 class="highlight">Payment</h1>
+            <div class="card">
+                <h2>Class Taught In This Month:</h2> <!-- Added closing tag for <h2> -->
+                <h2>Next Class:</h2> <!-- Added closing tag for <h2> -->
+            </div>
+        </div>
+    </div>
+    <div class="containerRight">
+        <div class="main-container">
+            <h1 class="highlight">Send Message To All Members:</h1> <!-- Corrected typo in "Members" -->
+            <div class="card">
+                <form action="/sendMessage" method="POST"> <!-- Add form with action and method -->
+                    <h2>Message:</h2> <!-- Added closing tag for <h2> -->
+                    <textarea name="message" rows="4" cols="50"></textarea> <!-- Add name attribute to textarea -->
+                    <br>
+                    <button type="submit" class="btn">Send</button> <!-- Change button type to submit -->
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to send POST request with classId
+        async function sendClassId(classId) {
+            try {
+                const response = await fetch('/showMembers', { // Replace '/your-endpoint' with your actual endpoint
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ classId: classId }),
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                console.log(classId, data);
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Select all buttons and add an event listener to each
+            Array.from(document.querySelectorAll('.btn')).forEach(button => {
+                button.addEventListener('click', function () {
+                    const classId = this.getAttribute('data-class-id'); // Get classId from the button
+                    sendClassId(classId); // Send classId with the POST request
+                    window.location.href = "/showMemberss";
+                    console.log(classId);
+                });
+            });
+            // Redirect to payment page
+            document.getElementById("redirectButton").addEventListener("click", function () {
+                window.location.href = "/processPayment";
+            });
+        });
+
+        document.getElementById("loginBtn").addEventListener("click", function () {
+                window.location.href = "/";
+            });
+
+        document.getElementById("registerBtn").addEventListener("click", function () {
+            window.location.href = "/register";
+        });
+    </script>
+
+</body>
+
+</html>

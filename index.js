@@ -21,6 +21,7 @@ const port = 3000;
 //used to render the ejs files so we can pass data to the front end
 app.set('view engine', 'ejs');
 app.use(bodyParser.json()); // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors()); // Enable CORS
 
 
@@ -329,9 +330,8 @@ app.get("/register", async (req, res) => {
 });
 
 app.get("/coachDashboard", async (req, res) => {
-    res.render("coachDashboard.ejs", {
+    res.render("coach.ejs", {
         allClasses: allClasses
-
     });
 });
 
@@ -394,6 +394,7 @@ app.get("/processPayment", async (req, res) => {
 });
 
 
+
 app.post('/sendMessage', (req, res) => {
     const message = req.body.message; // Access the message sent from the form
     console.log('Received message:', message);
@@ -408,7 +409,7 @@ app.post("/removeCoach", async (req, res) => {
     // or we can send the firstname from client
     const id = req.body.userId;
 
-    db.run("DELEtE FROM users WHERE userId = ?;", [id], async (err) => {
+    db.run("DELETE FROM users WHERE userId = ?;", [id], async (err) => {
         if (err) {
             console.error('Something went wrong when deleting user. ', err.message);
             return res.status(500).json({ message: err.message });
@@ -466,6 +467,59 @@ app.post("/attendClass", async (req, res) => {
 
 });
 
+function getUsersByClassId(classId) {
+    return new Promise((resolve, reject) => {
+        db.all(`SELECT UserID FROM Class_Attendance WHERE ClassID = ?`, [classId], (err, rows) => {
+            if (err) {
+                console.error('Error fetching user IDs for class ID:', classId, err.message);
+                reject(err); // Reject the Promise if there's an error
+            } else {
+                const userIds = rows.map(row => row.UserID);
+                resolve(userIds); // Resolve the Promise with the array of userIds
+            }
+        });
+    });
+}
+
+function getAllUsersWithTheFollowingIdFromThisArray(array) {
+    return new Promise((resolve, reject) => {
+        db.all(`SELECT * FROM Users WHERE UserID IN (${array.join(',')})`, (err, rows) => {
+            if (err) {
+                console.error('Error fetching users with the following IDs:', array, err.message);
+                reject(err); // Reject the Promise if there's an error
+            } else {
+                const users = rows.map(row => new User(row.UserID, row.FirstName, row.LastName, row.Username, row.Password, row.Email, row.Phone_Number, row.Role));
+                resolve(users); // Resolve the Promise with the array of users
+            }
+        });
+    });
+}
+
+async function displayUserIdsForClass(classId) {
+    try {
+        const userIds = await getUsersByClassId(classId);
+        return await getAllUsersWithTheFollowingIdFromThisArray(userIds);
+    } catch (error) {
+        console.error('Failed to get user IDs:', error);
+    }
+}
+
+let allUsers = []; // Declared outside the routes to make it accessible globally
+
+app.post("/showMembers", async (req, res) => {
+    let classId = req.body.classId;
+    allUsers = await displayUserIdsForClass(classId); // Update the global allUsers array
+    console.log(allUsers);
+    // Redirect to the GET route without passing allUsers as a query parameter
+    res.redirect("/showMemberss");
+});
+
+app.get("/showMemberss", async (req, res) => {
+    // Render the template using the global allUsers array
+    res.render("showMembers.ejs", {
+        allUsers: allUsers
+    });
+});
 
 
 // Register User
