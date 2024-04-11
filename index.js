@@ -157,7 +157,7 @@ function insertSampleData() {
     db.run(`INSERT INTO Classes (ClassName, ClassDcript, Coach, Date) VALUES 
     ('Intro to Naming thing',        'it names things',             1, '2021-10-01'),
     ('Intro to Naming thing better', 'it names things but better',  1, '2021-11-01'),
-    ('Intro to Naming better things','get better at naming things', 1, '2021-11-02'),
+    ('Intro to Naming better things','get better at naming things', 1, '2024-11-02'),
     ('Intro to names 101', 'when you dont know how to name things', 1, '2024-02-02')`, (err) => {
         if (err) {
             console.error('Error inserting sample data into Classes table', err.message);
@@ -268,7 +268,7 @@ function getAllAccountRecievable() {
 
 //mouthly
 function formatMonth(month) {
-    let monthInt = parseInt(month, 10);
+    let monthInt = parseInt(month, 10) + 1;
     return monthInt < 10 ? `0${monthInt}` : `${monthInt}`;
 }
 
@@ -330,7 +330,7 @@ async function getPastUnPaid() {
         inner join Users on Class_Attendance.UserID = Users.UserID 
         inner join Classes on Class_Attendance.ClassID = Classes.ClassID
         inner join Bank_Details on Class_Attendance.UserID = Bank_Details.UserID
-        where Pay_Status = 0 and Classes.Date  < date('${date.getFullYear().toString()}-${formatMonth(date.getMonth())}-01')`
+        where Pay_Status = 0 and Classes.Date < date('${date.getFullYear().toString()}-${formatMonth(date.getMonth())}-01')`
 
         db.all(query, (err, result) => {
             if (err) {
@@ -353,7 +353,29 @@ async function getPastUnPaid() {
     });
 }
 
-
+function getAllPaidAdvanced(){
+    return new Promise((resolve, reject)=>{
+        let date = new Date();
+        let query = `select Username, FirstName, LastName, ClassName, Date, Expenses from Class_Attendance 
+        inner join Classes on Class_Attendance.ClassID = Classes.ClassID 
+        inner join Users on Class_Attendance.UserID = Users.UserID
+        inner join Bank_Details on Class_Attendance.UserID = Bank_Details.UserID
+        where Pay_Status = 1 and Classes.date > date('${date.getFullYear().toString()}-${formatMonth(date.getMonth())}-01')`;
+        let arr = [];
+        db.all(query,(err,result)=>{
+            if (err){
+                console.error("couldnt get all people who paid in advance")
+                reject(err);
+            } else {
+                console.log(result);
+                result.forEach((row)=>{
+                    arr.push(row);
+                });
+                resolve(arr);
+            }
+        });
+    }); 
+}
 // Routes
 app.get("/", async (req, res) => {
     res.render("index.ejs", { error: false });
@@ -391,7 +413,7 @@ app.get("/treasurer", async (req, res) => {
         let netIncome = accountRecievable - rent - coachFee;
         let monthRev = await getAllAccountRecievableMonth();
         let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-
+        let paidAdvance = await getAllPaidAdvanced();
         // console.log("Monthly Income: back end" + monthRev);
         // console.log("All coaches backend" + allCoaches.length);
 
@@ -403,7 +425,8 @@ app.get("/treasurer", async (req, res) => {
             allCoaches: allCoaches,
             monthRev: monthRev,
             months: months,
-            UnPaidDebt: UnPaidDebt
+            UnPaidDebt: UnPaidDebt,
+            paidAdvance: paidAdvance,
         });
 
     } catch (error) {
@@ -546,10 +569,10 @@ app.post("/showMembers", async (req, res) => {
     allUsers = await displayUserIdsForClass(classId); // Update the global allUsers array
     console.log(allUsers);
     // Redirect to the GET route without passing allUsers as a query parameter
-    res.redirect("/showMemberss");
+    res.redirect("/showMembers");
 });
 
-app.get("/showMemberss", async (req, res) => {
+app.get("/showMembers", async (req, res) => {
     // Render the template using the global allUsers array
     res.render("showMembers.ejs", {
         allUsers: allUsers

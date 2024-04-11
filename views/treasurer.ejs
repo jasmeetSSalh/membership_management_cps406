@@ -211,7 +211,7 @@
         </table>
     </div>
     <div class="containerLeft">
-        <h1 class="highlight">Unpaid Debt</h1>
+        <h1 class="highlight">Unpaid Debt & Advance Payments</h1>
         <h2 class="highlight">Unpaid Classes</h2>
         <table>
             <thead>
@@ -248,8 +248,42 @@
             </tbody>
         </table>
         <h2>Unpaid Coach Fees: $ 0</h2>
+        <h2>Advance Payments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Class Paid</th>
+                    <th>Date of Class</th>
+                    <th>Payment Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < paidAdvance.length; i++) { %>
+                    <tr>
+                        <td>
+                            <%= paidAdvance[i].Username%>
+                        </td>
+                        <td>
+                            <%= paidAdvance[i].FirstName%> <%= paidAdvance[i].LastName%>
+                        </td>
+                        <td>
+                            <%= paidAdvance[i].ClassName%> 
+                        </td>
+                        <td>
+                            <%= paidAdvance[i].Date%>
+                        </td>
+                        <td> 
+                            <span style="color: green;">
+                            $ <%= paidAdvance[i].Expenses%>
+                            </span>
+                        </td>
+                    </tr>
+                    <% } %>
+            </tbody>
+        </table>
     </div>
-
     <div class="containerRight">
         <img src="https://cdn.discordapp.com/attachments/1214014972955463750/1227401363902828616/scuffed_background.png?ex=66284599&is=6615d099&hm=d9368342a131b03ee54642b35759451ec129f2ec61901799d10cc21d09ea0a09&"
             alt="Your Logo" class="logo-right">
