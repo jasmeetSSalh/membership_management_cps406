@@ -100,6 +100,7 @@ function createTables() {
 
     // Create Bank_Details table
     db.run(`CREATE TABLE IF NOT EXISTS Bank_Details (
+        Address text,
         UserID INTEGER,
         Expenses REAL DEFAULT 0.00,
         Missed_Payments INTEGER DEFAULT 0,
@@ -167,11 +168,11 @@ function insertSampleData() {
     });
 
     // Insert Bank_Details
-    db.run(`INSERT INTO Bank_Details (UserID, Expenses) VALUES
-    (1,20.50),
-    (2,20.50),
-    (3,20.50),
-    (4,20.50)`, (err) => {
+    db.run(`INSERT INTO Bank_Details (UserID, Address ,Expenses) VALUES
+    (3,"21 Dang Dr",20.50),
+    (5,"21 JohnJim St",20.50),
+    (6,"The Farm",20.50),
+    (7,"not 3 Left4Dead Ave",20.50)`, (err) => {
         if (err) {
             console.error('Error inserting sample data into Bank_Details table', err.message);
         } else {
@@ -180,18 +181,20 @@ function insertSampleData() {
     });
 
     // Insert Class_Attendance
+    //memebersIDs are 3,5,6,7
     db.run(`INSERT INTO Class_Attendance (ClassID, UserID, Times_Attended, Times_Paid, Attendance_Status, Pay_Status) VALUES
-    (1,1, 1, 1, 'Attended', 0),
-    (1,3, 1, 1, 'Attended', 0),
-    (1,4, 1, 1, 'Attended', 1),
-    (1,4, 1, 1, 'Attended', 1),
-    (2,1, 1, 1, 'Attended', 0),
-    (2,2, 1, 1, 'Attended', 0),
-    (2,3, 1, 1, 'Attended', 1),
-    (3,4, 1, 1, 'Attended', 0),
-    (3,4, 1, 1, 'Attended', 1),
-    (4,3, 1, 1, 'Attended', 0),
-    (4,4, 1, 1, 'Attended', 1)`, (err) => {
+    (1, 5, 1, 1, 'Attended', 0),
+    (1, 3, 1, 1, 'Attended', 0),
+    (1, 4, 1, 1, 'Attended', 1),
+    (1, 4, 1, 1, 'Attended', 1),
+    (2, 5, 1, 1, 'Attended', 0),
+    (2, 2, 1, 1, 'Attended', 0),
+    (2, 3, 1, 1, 'Attended', 1),
+    (3, 6, 1, 1, 'Attended', 0),
+    (3, 6, 1, 1, 'Attended', 1),
+    (4, 3, 1, 1, 'Attended', 0),
+    (4, 6, 1, 1, 'Attended', 1),
+    (4, 7, 1, 1, 'Attended', 0)`, (err) => {
         if (err) {
             console.error('Error inserting sample data into Class_Attendance table', err.message);
         } else {
@@ -381,16 +384,23 @@ app.get("/memberDashboard", async (req, res) => {
 
 app.get("/treasurer", async (req, res) => {
     try {
-
         let accountRecievable = await getAllAccountRecievable();
+        let UnPaidDebt = await getPastUnPaid();
         let rent = 2000;
         let coachFee = accountRecievable / 20;
         let netIncome = accountRecievable - rent - coachFee;
         let monthRev = await getAllAccountRecievableMonth();
         let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
+<<<<<<< HEAD
         // console.log("Monthly Income: back end" + monthRev);
         // console.log("All coaches backend" + allCoaches.length);
+=======
+        console.log("Monthly Income: back end" + monthRev);
+        console.log("All coaches backend" + allCoaches.length);
+        console.log("UnPaidDebt backend" + UnPaidDebt);
+
+>>>>>>> unpaid-list
 
         res.render("treasurer.ejs", {
             accountRecievable: accountRecievable,
@@ -399,8 +409,8 @@ app.get("/treasurer", async (req, res) => {
             netIncome: netIncome,
             allCoaches: allCoaches,
             monthRev: monthRev,
-            months: months
-
+            months: months,
+            UnPaidDebt: UnPaidDebt
         });
 
     } catch (error) {
