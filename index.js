@@ -44,7 +44,7 @@ let currentBankDetails = null;
 let allClasses = [];
 //Global varibable to store the user's classes with their attendance and payment status
 let userClasses = [];
-//Global variable to store all the coachs
+//Global variable to store all the coaches
 let allCoaches = [];
 //Message sent to the user
 let allMessages = [];
@@ -305,7 +305,7 @@ async function getAllAccountRecievableMonth() {
 
 
 function storeAllCoachesLocally() {
-    // Get al the user's who's role is a coach and push them into the allCoaches array
+    // Get all the users whose role is coach and push them into the allCoaches array
     db.all(`SELECT * FROM Users WHERE Role = 'Coach'`, (err, rows) => {
         if (err) {
             console.error('Error retrieving coaches', err.message);
@@ -491,6 +491,19 @@ app.post("/removeCoach", async (req, res) => {
     })
 })
 
+app.post("/removeMember", async (req, res) => {
+    const id = req.body.userId;
+
+    db.run("DELETE FROM Class_Attendance WHERE userId = ? AND classID = ?;", [id, shownClass], async (err) => {
+        if (err) {
+            console.error('Something went wrong when removing user from Class. ', err.message);
+            return res.status(500).json({ message: err.message });
+        } else { 
+            return res.status(200).json({ message: "Good" })
+        }
+    })
+})
+
 // Enroll in a class - Member Tab
 app.post("/attendClass", async (req, res) => {
     let classId = req.body.classId;
@@ -568,7 +581,6 @@ function filterByFrequency(classid){
         where ClassID = ${ClassID} 
         order by Times_Attended DESC`;
         let arr = [];
-
         db.all(query,(err,result) => {
             if (err){
                 console.log("didnt get the filtered whoopsies");
@@ -584,7 +596,18 @@ function filterByFrequency(classid){
         });
     });
 }
+let allUsers = []; // Declared outside the routes to make it accessible globally
+let shownClass = 0;
 
+app.post("/showMembers", async (req, res) => {
+    let classId = req.body.classId;
+    allUsers = await displayUserIdsForClass(classId); // Update the global allUsers array
+    shownClass = classId;
+    filterByFrequency(classId);
+    console.log(allUsers);
+    // Redirect to the GET route without passing allUsers as a query parameter
+    res.redirect("/showMembers");
+});
 function filterByPaymentStatus(classid){
     return new Promise((resolve, reject) => {
         let ClassID = parseInt(classid);
