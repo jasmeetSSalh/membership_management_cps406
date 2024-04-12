@@ -609,26 +609,41 @@ function filterByPaymentStatus(classid){
     });
 }
 
-let allUsers = []; // Declared outside the routes to make it accessible globally
+// Encapsulating allUsers within a closure
+const createAllUsersHandler = () => {
+    let allUsers = [];
 
-app.post("/showMembers", async (req, res) => {
-    console.log("app.post /showMembers");
-    let classId = req.body.classId;
-    allUsers = await filterByFrequency(classId); // Update the global allUsers array
-    //filterByFrequency(classId);
-    console.log(allUsers);
-    // Redirect to the GET route without passing allUsers as a query parameter
-    res.redirect("/showMembers");
-});
+    const showMembersPostHandler = async (req, res) => {
+        console.log("app.post /showMembers");
+        let classId = req.body.classId;
+        allUsers = await filterByFrequency(classId); // Update the allUsers array
+        console.log(allUsers);
+        // Redirect to the GET route after updating allUsers
+        res.redirect("/showMembers");
+    };
 
-app.get("/showMembers", async (req, res) => {
-    // Render the template using the global allUsers array
-    console.log("app.get /showMembers");
-    console.log(allUsers.length);
-    res.render("showMembers.ejs", {
-        allUsers: allUsers
-    });
-});
+    const showMembersGetHandler = async (req, res) => {
+        // Wait for a short delay to allow the redirect to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Render the template using the allUsers array
+        console.log("app.get /showMembers");
+        console.log(allUsers.length);
+        res.render("showMembers.ejs", {
+            allUsers: allUsers
+        });
+    };
+
+    return { showMembersPostHandler, showMembersGetHandler };
+};
+
+// Create an instance of the handler
+const allUsersHandler = createAllUsersHandler();
+
+// Use the handlers in your routes
+app.post("/showMembers", allUsersHandler.showMembersPostHandler);
+app.get("/showMembers", allUsersHandler.showMembersGetHandler);
+
 
 
 // Register User
