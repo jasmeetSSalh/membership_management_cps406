@@ -164,17 +164,20 @@
                 <th>First Name</th>
                 <th>Email</th>
                 <th>Phone Number</th>
+                <th>Number of Attended Classes</th>
                 <th>Remove From Class</th>
             </tr>
             <% for (let i = 0; i < allUsers.length; i++) { %>
                 <tr>
-                    <td><%= allUsers[i].firstName %></td>
-                    <td><%= allUsers[i].email %></td>
-                    <td><%= allUsers[i].phone %></td>
-                    <td><button type="button" class="btn" onClick="remove('<%= allUsers[i].userId %>')" id="removeBtn<%= i %>">Remove</button></td>
+                    <td><%= allUsers[i].FirstName %></td>
+                    <td><%= allUsers[i].Email %></td>
+                    <td><%= allUsers[i].Phone_Number %></td>
+                    <td><%= allUsers[i].Times_Attended %></td>
+                    td><button type="button" class="btn" onClick="remove('<%= allUsers[i].userId %>')" id="removeBtn<%= i %>">Remove</button></td>
                 </tr>
             <% } %>
         </table>
+        <!--maybe add a table here for members based on pay status, or we can have check boxes act as filter tabs -->
     </div>
     <script>
         async function remove(id) {

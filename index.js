@@ -155,10 +155,10 @@ function insertSampleData() {
 
     // Insert Classes
     db.run(`INSERT INTO Classes (ClassName, ClassDcript, Coach, Date) VALUES 
-    ('Intro to Naming thing',        'it names things',             1, '2021-10-01'),
-    ('Intro to Naming thing better', 'it names things but better',  1, '2021-11-01'),
-    ('Intro to Naming better things','get better at naming things', 1, '2024-11-02'),
-    ('Intro to names 101', 'when you dont know how to name things', 1, '2024-02-02')`, (err) => {
+    ('Intro to Golfing',        'it golf things',             2, '2021-10-01'),
+    ('Intro to Golfing better', 'it golf things but better',  2, '2021-11-01'),
+    ('Intro to Golfing better things','get better at Golfing things', 2, '2024-11-02'),
+    ('Intro to Winning Gold 101', 'when you dont know how to win Golf things', 2, '2024-02-02')`, (err) => {
         if (err) {
             console.error('Error inserting sample data into Classes table', err.message);
         } else {
@@ -189,8 +189,8 @@ function insertSampleData() {
     (2, 5, 2, 1, 'Attended', 0),
     (2, 2, 1, 1, 'Attended', 0),
     (2, 3, 3, 1, 'Attended', 1),
-    (3, 6, 1, 1, 'Attended', 0),
-    (3, 6, 1, 1, 'Attended', 1),
+    (3, 6, 1, 1, 'Attending', 0),
+    (3, 6, 1, 1, 'Attending', 1),
     (4, 3, 4, 1, 'Attended', 0),
     (4, 6, 3, 1, 'Attended', 1),
     (4, 7, 1, 1, 'Attended', 0)`, (err) => {
@@ -596,7 +596,6 @@ function filterByFrequency(classid){
         });
     });
 }
-
 let allUsers = []; // Declared outside the routes to make it accessible globally
 let shownClass = 0;
 
@@ -609,14 +608,65 @@ app.post("/showMembers", async (req, res) => {
     // Redirect to the GET route without passing allUsers as a query parameter
     res.redirect("/showMembers");
 });
+function filterByPaymentStatus(classid){
+    return new Promise((resolve, reject) => {
+        let ClassID = parseInt(classid);
+        let query = `select FirstName, Email, Phone_Number, Times_Attended, Pay_Status from Class_Attendance inner join Users on Class_Attendance.UserID = Users.UserID
+        where ClassID = ${ClassID} 
+        order by Pay_Status DESC`;
+        let arr = [];
 
-app.get("/showMembers", async (req, res) => {
-    // Render the template using the global allUsers array
-    console.log(allUsers.length);
-    res.render("showMembers.ejs", {
-        allUsers: allUsers
+        db.all(query,(err,result) => {
+            if (err){
+                console.log("didnt get the filtered whoopsies");
+                reject(err);
+            } else {
+                //console.log("filter by freuency");
+                //console.log(result);
+                result.forEach((row) => {
+                    arr.push(row);
+                });
+                resolve(arr);
+            }
+        });
     });
-});
+}
+
+// Encapsulating allUsers within a closure
+const createAllUsersHandler = () => {
+    let allUsers = [];
+
+    const showMembersPostHandler = async (req, res) => {
+        console.log("app.post /showMembers");
+        let classId = req.body.classId;
+        allUsers = await filterByFrequency(classId); // Update the allUsers array
+        console.log(allUsers);
+        // Redirect to the GET route after updating allUsers
+        res.redirect("/showMembers");
+    };
+
+    const showMembersGetHandler = async (req, res) => {
+        // Wait for a short delay to allow the redirect to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Render the template using the allUsers array
+        console.log("app.get /showMembers");
+        console.log(allUsers.length);
+        res.render("showMembers.ejs", {
+            allUsers: allUsers
+        });
+    };
+
+    return { showMembersPostHandler, showMembersGetHandler };
+};
+
+// Create an instance of the handler
+const allUsersHandler = createAllUsersHandler();
+
+// Use the handlers in your routes
+app.post("/showMembers", allUsersHandler.showMembersPostHandler);
+app.get("/showMembers", allUsersHandler.showMembersGetHandler);
+
 
 
 // Register User
