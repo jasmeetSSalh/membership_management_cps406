@@ -86,6 +86,19 @@
             border-radius: 5px;
         }
 
+        .btnView {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
         .btn:hover {
             background-color: #45a049;
         }
@@ -137,7 +150,7 @@
                 <div class="card">
                     <h2>Class: <%= allClasses[i].className %></h2>
                     <p>Description: <%= allClasses[i].classDescription %></p>
-                    <button type="button" class="btn" id="attendBtn<%= i %>"
+                    <button type="button" class="btnView" id="attendBtn<%= i %>"
                         data-class-id="<%= allClasses[i].classId %>">View Members</button> <!-- Corrected typo in "Members" -->
                 </div>
             <% } %>
@@ -145,10 +158,10 @@
     </div>
     <div class="containerRight">
         <div class="main-container">
-            <h1 class="highlight">Payment</h1>
+            <h1 class="highlight">Payment: </h1>
             <div class="card">
-                <h2>Class Taught In This Month:</h2> <!-- Added closing tag for <h2> -->
-                <h2>Next Class:</h2> <!-- Added closing tag for <h2> -->
+                <h2>Class Taught In This Month: $300</h2> <!-- Added closing tag for <h2> -->
+                <h2>Next Class: 3</h2> <!-- Added closing tag for <h2> -->
             </div>
         </div>
     </div>
@@ -189,7 +202,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             // Select all buttons and add an event listener to each
-            Array.from(document.querySelectorAll('.btn')).forEach(button => {
+            Array.from(document.querySelectorAll('.btnView')).forEach(button => {
                 button.addEventListener('click', function () {
                     const classId = this.getAttribute('data-class-id'); // Get classId from the button
                     sendClassId(classId); // Send classId with the POST request
