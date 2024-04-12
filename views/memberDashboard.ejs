@@ -154,10 +154,10 @@
             <h1 class="highlight">Payment Information</h1>
             <div class="card payment-window">
                 <label for="amount">Payment Missed:</label>
-                <input type="text" id="amount" name="amount" value="<%= currentBankDetails[1] %>" readonly>
+                <input type="text" id="amount" name="amount" value="<%= paymentMissed %>" readonly>
                 <br>
                 <label for="amount">Payment Due:</label>
-                <input type="text" id="amount" name="amount" value="$<%= currentBankDetails[0] %>" readonly>
+                <input type="text" id="amount" name="amount" value="$<%= paymentAmount %>" readonly>
                 <br>
                 <button id="redirectButton" class="btn">Pay Now</button>
             </div>
@@ -224,6 +224,7 @@
             });
 
         });
+
     </script>
 </body>
 

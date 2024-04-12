@@ -38,8 +38,6 @@ app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 //Global variable to store the logged in user
 let currentUser = null;
-//Global variable to store the bank details of the logged in user
-let currentBankDetails = null;
 //Global variable to store all the classes in the database
 let allClasses = [];
 //Global varibable to store the user's classes with their attendance and payment status
@@ -391,13 +389,18 @@ app.get("/coachDashboard", async (req, res) => {
     });
 });
 
+//Global variable to store the bank details of the logged in user
+let currentBankDetails = null;
+let paymentAmount = 300;
+let paymentMissed = 3;
+
 app.get("/memberDashboard", async (req, res) => {
-    currentBankDetails = [300, 3];
 
     res.render("memberDashboard.ejs", {
         allClasses: allClasses,
         currentUser: currentUser,
-        currentBankDetails: currentBankDetails,
+        paymentAmount: paymentAmount,
+        paymentMissed: paymentMissed,
         userClasses: userClasses,
         allMessages: allMessages
     });
@@ -448,6 +451,12 @@ app.get("/processPayment", async (req, res) => {
     //When the submit button on the payment processing page is clicked need to update the bank details
     //and send the treasurer back to the treasurer page
 
+});
+app.get("/paymenetRecievedSuccessfully", async (req, res) => {
+    res.render("paymenetRecievedSuccessfully.ejs", {
+    });
+    paymentAmount = 0;
+    paymentMissed = 0;
 });
 
 

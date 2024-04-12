@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animated Checkmark</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    text-align: center;
+  }
+
+  .checkmark {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    display: block;
+    stroke: green;
+    stroke-width: 2;
+    fill: none;
+    animation: checkmarkAnimation 1s ease forwards;
+  }
+  
+  @keyframes checkmarkAnimation {
+    0% {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+    }
+    100% {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 0;
+    }
+  }
+
+  h1 {
+    color: green;
+    font-size: 24px;
+    margin: 20px 0 0;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
+  </svg>
+  <h1>Payment Received Successfully!</h1>
+</div>
+<script>
+  // Redirect to another page after a timeout
+  setTimeout(function() {
+    window.location.href = "/memberDashboard";
+  }, 1000); // Timeout in milliseconds
+</script>
+</body>
+</html>
