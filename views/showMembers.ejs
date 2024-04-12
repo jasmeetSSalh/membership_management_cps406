@@ -165,14 +165,14 @@
                 <th>First Name</th>
                 <th>Email</th>
                 <th>Phone Number</th>
+                <th>Number of Attended Classes</th>
             </tr>
             <% for (let i = 0; i < allUsers.length; i++) { %>
                 <tr>
-                    <td><%= allUsers[i].firstName %></td>
-                    <td><%= allUsers[i].email %></td>
-                    <td><%= allUsers[i].phone %></td>
-                    <td><h6>button1</h6></td>
-                    <td><h6>button2</h6></td>
+                    <td><%= allUsers[i].FirstName %></td>
+                    <td><%= allUsers[i].Email %></td>
+                    <td><%= allUsers[i].Phone_Number %></td>
+                    <td><%= allUsers[i].Times_Attended %></td>
                 </tr>
             <% } %>
         </table>
