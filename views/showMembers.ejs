@@ -152,9 +152,10 @@
 
 <body>
     <header>
-        <h1>Member List</h1>
+        <h1>Member List!</h1>
         <div class="auth-buttons">
-            <button class="btn" id="backBtn">Back</button>
+            <button class="btn" id="loginBtn">Login</button>
+            <button class="btn" id="registerBtn">Register</button>
         </div>
     </header>
     <div class="containerLeft">
@@ -165,7 +166,6 @@
                 <th>Email</th>
                 <th>Phone Number</th>
                 <th>Number of Attended Classes</th>
-                <th>Remove From Class</th>
             </tr>
             <% for (let i = 0; i < allUsers.length; i++) { %>
                 <tr>
@@ -173,39 +173,18 @@
                     <td><%= allUsers[i].Email %></td>
                     <td><%= allUsers[i].Phone_Number %></td>
                     <td><%= allUsers[i].Times_Attended %></td>
-                    td><button type="button" class="btn" onClick="remove('<%= allUsers[i].userId %>')" id="removeBtn<%= i %>">Remove</button></td>
                 </tr>
             <% } %>
         </table>
         <!--maybe add a table here for members based on pay status, or we can have check boxes act as filter tabs -->
     </div>
     <script>
-        async function remove(id) {
-                        try {
-                            console.log(id)
-                            const response = await fetch('/removeMember', {
-                                method: 'POST',
-                                headers: {
-                                'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ userId: id }),
-                            });
-                            if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                            }
+        document.getElementById("loginBtn").addEventListener("click", function () {
+            window.location.href = "/";
+        });
 
-                            const data = await response.json();
-                            if (data.message === "Good") {
-                            window.location.href = "/coachDashboard";
-                            }
-                        } catch (error) {
-                            console.error('There was a problem with the fetch operation:', error);
-                        }
-                    }
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById("backBtn").addEventListener("click", function () {
-                window.location.href = "/coachDashboard";
-            });
+        document.getElementById("registerBtn").addEventListener("click", function () {
+            window.location.href = "/register";
         });
     </script>
 </body>
