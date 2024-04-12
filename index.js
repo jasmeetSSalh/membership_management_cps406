@@ -155,10 +155,10 @@ function insertSampleData() {
 
     // Insert Classes
     db.run(`INSERT INTO Classes (ClassName, ClassDcript, Coach, Date) VALUES 
-    ('Intro to Naming thing',        'it names things',             1, '2021-10-01'),
-    ('Intro to Naming thing better', 'it names things but better',  1, '2021-11-01'),
-    ('Intro to Naming better things','get better at naming things', 1, '2024-11-02'),
-    ('Intro to names 101', 'when you dont know how to name things', 1, '2024-02-02')`, (err) => {
+    ('Intro to Golfing',        'it golf things',             2, '2021-10-01'),
+    ('Intro to Golfing better', 'it golf things but better',  2, '2021-11-01'),
+    ('Intro to Golfing better things','get better at Golfing things', 2, '2024-11-02'),
+    ('Intro to Winning Gold 101', 'when you dont know how to win Golf things', 2, '2024-02-02')`, (err) => {
         if (err) {
             console.error('Error inserting sample data into Classes table', err.message);
         } else {
@@ -189,8 +189,8 @@ function insertSampleData() {
     (2, 5, 2, 1, 'Attended', 0),
     (2, 2, 1, 1, 'Attended', 0),
     (2, 3, 3, 1, 'Attended', 1),
-    (3, 6, 1, 1, 'Attended', 0),
-    (3, 6, 1, 1, 'Attended', 1),
+    (3, 6, 1, 1, 'Attending', 0),
+    (3, 6, 1, 1, 'Attending', 1),
     (4, 3, 4, 1, 'Attended', 0),
     (4, 6, 3, 1, 'Attended', 1),
     (4, 7, 1, 1, 'Attended', 0)`, (err) => {
@@ -567,6 +567,30 @@ function filterByFrequency(classid){
         let query = `select FirstName, Email, Phone_Number, Times_Attended from Class_Attendance inner join Users on Class_Attendance.UserID = Users.UserID
         where ClassID = ${ClassID} 
         order by Times_Attended DESC`;
+        let arr = [];
+
+        db.all(query,(err,result) => {
+            if (err){
+                console.log("didnt get the filtered whoopsies");
+                reject(err);
+            } else {
+                //console.log("filter by freuency");
+                //console.log(result);
+                result.forEach((row) => {
+                    arr.push(row);
+                });
+                resolve(arr);
+            }
+        });
+    });
+}
+
+function filterByPaymentStatus(classid){
+    return new Promise((resolve, reject) => {
+        let ClassID = parseInt(classid);
+        let query = `select FirstName, Email, Phone_Number, Times_Attended, Pay_Status from Class_Attendance inner join Users on Class_Attendance.UserID = Users.UserID
+        where ClassID = ${ClassID} 
+        order by Pay_Status DESC`;
         let arr = [];
 
         db.all(query,(err,result) => {
